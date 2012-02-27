@@ -17,7 +17,7 @@ class Demo{
 		$this->db_query();
 		$this->setDemoData();
 
-		echo $this->demo_dir;
+		
 		//$this->setButtonData();
 		// if($this->isValid($this,$demo)){
 		// 	$this->saveDemo();
@@ -78,7 +78,7 @@ class Demo{
 	}
 	function setDemoDir(){
 		//Cannot be specified by user; set demo
-		if( !$this->demo_dir){
+		if( !isset($this->demo_dir)){
 			if($this->id && !is_null($this->db_result['demo_dir'])){
 				$this->demo_dir = $this->db_result['demo_dir'];
 			}
@@ -89,22 +89,36 @@ class Demo{
 		}
 	}
 	function setDemoName(){
-		if(!$this->name && !isset($_GET['demo_name'])){
-			//demo selected to edit, set name to db value
-			if($this->id){
+		if(!$this->name){
+			if(isset($_GET['demo_name'])){
+				$this->name = $_GET['demo_name'];
+			}
+			elseif(isset($this->id) && !is_null($this->db_result['demo_name'])){
 				$this->name = $this->db_result['demo_name'];
 			}
 			else{
-				echo 'Error setting Demo Name - No Demo ID Set';
-			}		
+				$this->name = 'Default';
+			}
+
 		}
-		elseif(isset($_GET['demo_name'])){
-			//form submitted, set name to form value
-			$this->name = $_GET['demo_name'];
-		}
-		else{
-			$this->name = 'Default';
-		}
+		
+
+		// if(!$this->name && !isset($_GET['demo_name'])){
+		// 	//demo selected to edit, set name to db value
+		// 	if($this->id && !is_null($this->db_result['demo_name'])){
+		// 		$this->name = $this->db_result['demo_name'];
+		// 	}
+		// 	else{
+		// 		echo 'Error setting Demo Name - No Demo ID Set/No Existing Name in DB';
+		// 	}		
+		// }
+		// elseif(isset($_GET['demo_name'])){
+		// 	//form submitted, set name to form value
+		// 	$this->name = $_GET['demo_name'];
+		// }
+		// else{
+		// 	$this->name = 'Default';
+		// }
 	}
 
 	function setSiteURL(){
