@@ -13,11 +13,11 @@ class Demo{
 	var $db_result = array();
 
 	function __construct() {
-		$this->id = 1; //remove this eventually
+		$this->id = 2; //remove this eventually
 		$this->db_query();
-		//$this->setDemoData();
-		echo $this->db_result['demo_url'];
+		$this->setDemoData();
 
+		echo $this->demo_dir;
 		//$this->setButtonData();
 		// if($this->isValid($this,$demo)){
 		// 	$this->saveDemo();
@@ -34,7 +34,6 @@ class Demo{
 		mysql_select_db("test", $con) or die(mysql_error());
 		if($this->id){
 			$result = mysql_query("select * from demo where id = " . $this->id . ";") or die(mysql_error());
-			//$result = mysql_query("select * from demo where id = 1;"); 
 			$data = mysql_fetch_array($result);
 		}
 		else{
@@ -64,12 +63,13 @@ class Demo{
 	function setDemoData(){
 		//set the Demo variables
 
-		$this->setName();
+		$this->setDemoDir();
+		$this->setDemoName();
 		// $this->setSiteURL();
 		// $this->setDemoURL();
 		// $this->setOwnerID();
 		// $this->setDashboardID();
-		// $this->setDemoDir();
+
 
 	}
 	function isValid($item, $format){
@@ -77,34 +77,52 @@ class Demo{
 		return true;
 	}
 	function setDemoDir(){
-		if( !$this->$demo_dir){
-			if($this->$id){
-				$this->$demo_dir = $db_result['demo_dir'];
+		//Cannot be specified by user; set demo
+		if( !$this->demo_dir){
+			if($this->id && !is_null($this->db_result['demo_dir'])){
+				$this->demo_dir = $this->db_result['demo_dir'];
+			}
+			else{
+				$dir_root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/';
+				$this->demo_dir = $dir_root.'demos/test';
 			}
 		}
 	}
 	function setDemoName(){
-		if( !$this->$name){
+		if(!$this->name && !isset($_GET['demo_name'])){
 			//demo selected to edit, set name to db value
 			if($this->id){
-				$this->$name = $db_result['demo_name'];
+				$this->name = $this->db_result['demo_name'];
 			}
+			else{
+				echo 'Error setting Demo Name - No Demo ID Set';
+			}		
 		}
-		elseif($_GET['demo_name']){
+		elseif(isset($_GET['demo_name'])){
 			//form submitted, set name to form value
-			$this->$name = $_GET['demo_name'];
+			$this->name = $_GET['demo_name'];
 		}
-		
+		else{
+			$this->name = 'Default';
+		}
 	}
 
 	function setSiteURL(){
-		if( !$this->$site_url){
-			if($this->$id){
-				$this->$site_url = $db_result['site_url'];
+		if(!$this->site_url && !isset($_GET['site_url'])){
+			//demo selected to edit, set name to db value
+			if($this->id){
+				$this->site_url = $this->db_result['site_url'];
 			}
+			else{
+				echo 'Error setting Site URL - No Demo ID Set';
+			}		
 		}
-		elseif($_GET['site_url']){
-			$this->$site_url = $_GET['site_url'];
+		elseif(isset($_GET['site_url'])){
+			//form submitted, set name to form value
+			$this->site_url = $_GET['site_url'];
+		}
+		else{
+			echo 'Error setting Site URL';
 		}
 		
 	}
