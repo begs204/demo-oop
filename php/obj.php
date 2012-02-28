@@ -66,10 +66,11 @@ class Demo{
 
 		$this->setDemoDir();
 		$this->setDemoName();
-		// $this->setSiteURL();
-		// $this->setDemoURL();
-		// $this->setOwnerID();
-		// $this->setDashboardID();
+		$this->setDashboardID();
+		$this->setSiteURL();
+		$this->setDemoURL();
+		$this->setOwnerID();
+
 
 
 	}
@@ -104,7 +105,7 @@ class Demo{
 	}
 
 	function setSiteURL(){
-		if(!$this->site_url){
+		if(!isset($this->site_url)){
 			if(isset($_GET['site_url']) && !is_null($_GET['site_url'])){
 				$this->site_url = $_GET['site_url'];
 			}
@@ -116,41 +117,51 @@ class Demo{
 			}
 
 		}
-
+	}
 
 	function setDemoURL(){
-		if(!$this->demo_url){
+		if(!isset($this->demo_url)){
 			if(isset($this->id) && !is_null($this->db_result['demo_url'])){
 				$this->demo_url = $this->db_result['demo_url'];
 			}
 			else{
-				$demo_root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/';
-				if(isset($this->dashboard_id) && isset($this->name)){
-					$rand = (string) rand(0,1000000);
-					$this->demo_url = $dir_root.'demos/'.$this->dashboard_id.$rand;
+				$rand = (string) rand(0,1000000);
+				if(isset($this->dashboard_id)){	
+					$this->demo_url = $this->dir_root.'demos/'.$this->dashboard_id.'/'.$rand;
+				}
+				else{
+					$this->demo_url = $this->dir_root.'demos/test/'.$rand;
 				}
 				
 			}
 
 		}
+	}
 	function setOwnerID(){
-		if( !$this->$owner_id){
-			if($this->$id){
-				$this->$owner_id = $db_result['owner_id'];
-			}
-			elseif($_SESSION['owner_id']){
+		if( !isset($this->$owner_id)){
+			if($_SESSION['owner_id']){
 				$this->$owner_id = $_SESSION['owner_id'];
+			}
+			elseif(isset($this->id) && !is_null($this->db_result['owner_id'])){
+				$this->owner_id = $db_result['owner_id'];
+			}
+			else{
+				$this->owner_id = 'default';
 			}
 		}
 	}
 	function setDashboardID(){
-		if( !$this->$dashboard_id){
-			if($this->$id){
-				$this->$dashboard_id = $db_result['dashboard_id'];
+		if(!isset($this->dashboard_id)){
+			if(isset($_GET['dashboard_id']) && !is_null($_GET['dashboard_id'])){
+				$this->dashboard_id = $_GET['dashboard_id'];
 			}
-			elseif($_SESSION['dashboard_id']){
-				$this->$dashboard_id = $_SESSION['dashboard_id'];
+			elseif(isset($this->id) && !is_null($this->db_result['dashboard_id'])){
+				$this->dashboard_id = $this->db_result['dashboard_id'];
 			}
+			else{
+				$this->dashboard_id = 'meebotest_meebo';
+			}
+
 		}
 	}
 
