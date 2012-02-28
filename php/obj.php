@@ -90,7 +90,7 @@ class Demo{
 	}
 	function setDemoName(){
 		if(!$this->name){
-			if(isset($_GET['demo_name'])){
+			if(isset($_GET['demo_name']) && !is_null($_GET['site_url'])){
 				$this->name = $_GET['demo_name'];
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['demo_name'])){
@@ -122,24 +122,20 @@ class Demo{
 	}
 
 	function setSiteURL(){
-		if(!$this->site_url && !isset($_GET['site_url'])){
-			//demo selected to edit, set name to db value
-			if($this->id){
+		if(!$this->site_url){
+			if(isset($_GET['site_url']) && !is_null($_GET['site_url'])){
+				$this->site_url = $_GET['site_url'];
+			}
+			elseif(isset($this->id) && !is_null($this->db_result['site_url'])){
 				$this->site_url = $this->db_result['site_url'];
 			}
 			else{
-				echo 'Error setting Site URL - No Demo ID Set';
-			}		
+				$this->site_url = 'http://www.blog.meebo.com';
+			}
+
 		}
-		elseif(isset($_GET['site_url'])){
-			//form submitted, set name to form value
-			$this->site_url = $_GET['site_url'];
-		}
-		else{
-			echo 'Error setting Site URL';
-		}
-		
-	}
+
+
 	function setDemoURL(){
 		//internal designation - no opportunity for 'GET'
 		if( !$this->$demo_url){
