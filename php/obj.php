@@ -11,6 +11,7 @@ class Demo{
 	var $demo_dir;
 	var $buttons = array();
 	var $db_result = array();
+	var $dir_root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/';
 
 	function __construct() {
 		$this->id = 2; //remove this eventually
@@ -79,17 +80,16 @@ class Demo{
 	function setDemoDir(){
 		//Cannot be specified by user; set demo
 		if( !isset($this->demo_dir)){
-			if($this->id && !is_null($this->db_result['demo_dir'])){
+			if(isset($this->id) && !is_null($this->db_result['demo_dir'])){
 				$this->demo_dir = $this->db_result['demo_dir'];
 			}
 			else{
-				$dir_root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/';
-				$this->demo_dir = $dir_root.'demos/test';
+				$this->demo_dir = $this->dir_root.'demos/test';
 			}
 		}
 	}
 	function setDemoName(){
-		if(!$this->name){
+		if(!isset($this->name)){
 			if(isset($_GET['demo_name']) && !is_null($_GET['site_url'])){
 				$this->name = $_GET['demo_name'];
 			}
@@ -101,24 +101,6 @@ class Demo{
 			}
 
 		}
-		
-
-		// if(!$this->name && !isset($_GET['demo_name'])){
-		// 	//demo selected to edit, set name to db value
-		// 	if($this->id && !is_null($this->db_result['demo_name'])){
-		// 		$this->name = $this->db_result['demo_name'];
-		// 	}
-		// 	else{
-		// 		echo 'Error setting Demo Name - No Demo ID Set/No Existing Name in DB';
-		// 	}		
-		// }
-		// elseif(isset($_GET['demo_name'])){
-		// 	//form submitted, set name to form value
-		// 	$this->name = $_GET['demo_name'];
-		// }
-		// else{
-		// 	$this->name = 'Default';
-		// }
 	}
 
 	function setSiteURL(){
@@ -137,14 +119,20 @@ class Demo{
 
 
 	function setDemoURL(){
-		//internal designation - no opportunity for 'GET'
-		if( !$this->$demo_url){
-			if($this->$id){
-				$this->$demo_url = $db_result['demo_url'];
+		if(!$this->demo_url){
+			if(isset($this->id) && !is_null($this->db_result['demo_url'])){
+				$this->demo_url = $this->db_result['demo_url'];
 			}
-		}
+			else{
+				$demo_root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/';
+				if(isset($this->dashboard_id) && isset($this->name)){
+					$rand = (string) rand(0,1000000);
+					$this->demo_url = $dir_root.'demos/'.$this->dashboard_id.$rand;
+				}
+				
+			}
 
-	}
+		}
 	function setOwnerID(){
 		if( !$this->$owner_id){
 			if($this->$id){
