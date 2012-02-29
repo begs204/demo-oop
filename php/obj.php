@@ -49,7 +49,10 @@ class Demo{
 		
 	}
 	function saveDemo(){
-		//...
+		if(isset($this->id)){ //Record already existed/updating
+
+
+		}
 		return true;
 	}
 
@@ -177,10 +180,28 @@ class Button {
 	var $image_width;
 	var $link_url;
 
-	function __contruct(){
+	function __construct(){
 		return true;
 	}
 
 }
 
+class db_connection{
+	var $con;
+
+	function __construct(){
+		$con = 	mysql_connect("localhost","root","root") or die(mysql_error());
+	}
+	function connect($database){
+		mysql_select_db($database, $con) or die(mysql_error());
+	}
+	function disconnect(){
+		mysql_close($con);
+	}
+	function exec($query){
+		$result = mysql_query($query) or die(mysql_error()):
+		$data = mysql_fetch_array($result);
+		return $data;
+	}
+}
 ?>

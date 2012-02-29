@@ -11,6 +11,6 @@
 include 'obj.php';
 $test = new Demo(); 
 //$test->id = 1;
- echo $test->owner_id;
+
 
 ?>
