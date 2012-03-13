@@ -30,19 +30,18 @@ class Demo{
 		// 	return false;
 		// }
 	}
-	// function db_query(){
-	// 	$con = mysql_connect("localhost","root","root") or die(mysql_error());
-	// 	mysql_select_db("test", $con) or die(mysql_error());
-	// 	if($this->id){
-	// 		$result = mysql_query("select * from demo where id = " . $this->id . ";") or die(mysql_error());
-	// 		$data = mysql_fetch_array($result);
-	// 	}
-	// 	else{
-	// 		echo 'No ID passed';
-	// 	}
-	// 	mysql_close($con);
-	// 	$this->db_result = $data;
-	// }
+
+	function db_query(){
+		if($this->id){
+			$db = new db_connection();
+			$db->exec("select * from demo where id = " . $this->id . ";");
+			$this->db_result = $db->response;
+			$db->disconnect();
+		}
+		else{
+			echo 'No ID passed';
+		}
+	}
 
 	function editDemo(){
 		//Fill this in!
