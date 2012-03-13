@@ -30,27 +30,31 @@ class Demo{
 		// 	return false;
 		// }
 	}
-	function db_query(){
-		$con = mysql_connect("localhost","root","root") or die(mysql_error());
-		mysql_select_db("test", $con) or die(mysql_error());
-		if($this->id){
-			$result = mysql_query("select * from demo where id = " . $this->id . ";") or die(mysql_error());
-			$data = mysql_fetch_array($result);
-		}
-		else{
-			echo 'No ID passed';
-		}
-		mysql_close($con);
-		$this->db_result = $data;
-	}
+	// function db_query(){
+	// 	$con = mysql_connect("localhost","root","root") or die(mysql_error());
+	// 	mysql_select_db("test", $con) or die(mysql_error());
+	// 	if($this->id){
+	// 		$result = mysql_query("select * from demo where id = " . $this->id . ";") or die(mysql_error());
+	// 		$data = mysql_fetch_array($result);
+	// 	}
+	// 	else{
+	// 		echo 'No ID passed';
+	// 	}
+	// 	mysql_close($con);
+	// 	$this->db_result = $data;
+	// }
 
 	function editDemo(){
+		//Fill this in!
 		echo '<form action="obj.php" method="post" enctype="multipart/form-data">';
 		
 	}
 	function saveDemo(){
 		if(isset($this->id)){ //Record already existed/updating
 
+
+		}
+		else{//creating new record
 
 		}
 		return true;
@@ -188,20 +192,23 @@ class Button {
 
 class db_connection{
 	var $con;
+	var $database = "test";
+	var $query;
+	var $response = array();
 
 	function __construct(){
-		$con = 	mysql_connect("localhost","root","root") or die(mysql_error());
+		$this->con = 	mysql_connect("localhost","root","root") or die(mysql_error());
+		$this->connect();
 	}
-	function connect($database){
-		mysql_select_db($database, $con) or die(mysql_error());
+	function connect(){
+		mysql_select_db($this->database, $this->con) or die(mysql_error());
 	}
 	function disconnect(){
-		mysql_close($con);
+		mysql_close($this->con);
 	}
 	function exec($query){
-		$result = mysql_query($query) or die(mysql_error()):
-		$data = mysql_fetch_array($result);
-		return $data;
+		$result = mysql_query($query) or die(mysql_error());
+		$this->response = mysql_fetch_array($result);		
 	}
 }
 ?>
