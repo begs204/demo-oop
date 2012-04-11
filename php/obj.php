@@ -32,7 +32,7 @@ class Demo{
 	}
 
 	function db_query(){
-		if($this->id){
+		if(isset($this->id)){
 			$db = new db_connection();
 			$db->exec("select * from demo where id = " . $this->id . ";");
 			$this->db_result = $db->response;
@@ -48,9 +48,31 @@ class Demo{
 		echo '<form action="obj.php" method="post" enctype="multipart/form-data">';
 		
 	}
-	function saveDemo(){
-		if(isset($this->id)){ //Record already existed/updating
 
+	function saveDemo(){
+		$save_param = array('id' => $this->id, 'demo_dir'=> $this->demo_dir, 'demo_name'=> $this->name, 'site_url'=> $this->site_url, 'demo_url'=> $this->demo_url, 'owner_id'=> $this->owner_id, 'dashboard_id'=> $this->dashboard_id);
+		$param_str = "";
+		$value_str = "";
+		foreach ($save_param as $key => $value) {
+			if(isset($value)){
+				$param_str = $param_str. $key. ", ";
+				if ($key == 'id' or $key == 'owner_id'){
+					$value_str = $value_str.$value. " ,";
+				}
+				else{
+					$value_str = $value_str."'" . $value. "' ,";
+				}
+			}
+		 } 
+		 $param_str = substr(rtrim($param_str), 0, -1);
+		 $value_str = substr(rtrim($value_str), 0, -1);
+
+
+		if(isset($this->id)){ //Record already existed/updating
+			// $save_param = array($this->name => "heya");
+			// print $save_param[$this->name];	
+
+			$save_str = "update demo set "		
 
 		}
 		else{//creating new record
@@ -152,7 +174,7 @@ class Demo{
 				$this->owner_id = $db_result['owner_id'];
 			}
 			else{
-				$this->owner_id = 'default';
+				$this->owner_id = '-1';
 			}
 		}
 	}
