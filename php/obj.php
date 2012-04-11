@@ -50,35 +50,52 @@ class Demo{
 	}
 
 	function saveDemo(){
-		$save_param = array('id' => $this->id, 'demo_dir'=> $this->demo_dir, 'demo_name'=> $this->name, 'site_url'=> $this->site_url, 'demo_url'=> $this->demo_url, 'owner_id'=> $this->owner_id, 'dashboard_id'=> $this->dashboard_id);
-		$param_str = "";
-		$value_str = "";
-		foreach ($save_param as $key => $value) {
-			if(isset($value)){
-				$param_str = $param_str. $key. ", ";
-				if ($key == 'id' or $key == 'owner_id'){
-					$value_str = $value_str.$value. " ,";
-				}
-				else{
-					$value_str = $value_str."'" . $value. "' ,";
-				}
+		$save_param = array('demo_dir'=> $this->demo_dir, 'demo_name'=> $this->name, 'site_url'=> $this->site_url, 'demo_url'=> $this->demo_url, 'owner_id'=> $this->owner_id, 'dashboard_id'=> $this->dashboard_id);
+		$save_str="";
+
+		//Compose query string
+		if(isset($this->id)){//Record already exists - update it
+			$save_str = "update demo set ";
+			foreach ($save_param as $key => $value) {
+				if(isset($value)){
+					if ($key == 'owner_id'){
+						$save_str = $save_str . $key." = ". $value . ", ";
+					}
+					else{
+						$save_str = $save_str . $key." = '". $value . "', ";
+					}
+				}	
 			}
-		 } 
-		 $param_str = substr(rtrim($param_str), 0, -1);
-		 $value_str = substr(rtrim($value_str), 0, -1);
-
-
-		if(isset($this->id)){ //Record already existed/updating
-			// $save_param = array($this->name => "heya");
-			// print $save_param[$this->name];	
-
-			$save_str = "update demo set "		
+		$save_str = substr(rtrim($save_str), 0, -1);
+		$save_str = $save_str." where id = ".$this->id.";";	
 
 		}
-		else{//creating new record
+		else{ //New demo - create record in database
+			$param_str = "";
+			$value_str = "";
+			foreach ($save_param as $key => $value) {
+				if(isset($value)){
+					$param_str = $param_str. $key. ", ";
+					if ($key == 'owner_id'){
+						$value_str = $value_str.$value. " ,";
+					}
+					else{
+						$value_str = $value_str."'" . $value. "' ,";
+					}
+				}
+			 } 
+			 $param_str = substr(rtrim($param_str), 0, -1);
+			 $value_str = substr(rtrim($value_str), 0, -1);
 
+			 $save_str = "insert into demo (".$param_str.") values (".$value_str.");";
 		}
-		return true;
+
+		//execute database update
+		$db_save = new db_connection();
+		$db_save->exec($save_str);
+		//print $db_save->response;
+		$db_save->disconnect();
+
 	}
 
 	function setButtonData(){
