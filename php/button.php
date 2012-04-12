@@ -5,6 +5,7 @@ class Button {
 	var $demo_id;
 	var $title;
 	var $title_is_hidden;
+	var $icon_exists;
 	var $icon_url;
 	var $icon_is_logo;
 	var $icon_dir;
@@ -12,6 +13,7 @@ class Button {
 	var $img_ht;
 	var $img_w;
 	var $link_url;
+	var $type;
 	var $dir_root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/';
 
 	function __construct(){
@@ -32,9 +34,41 @@ class Button {
 		}
 	}
 	function setButtonData(){
-		$this->setButtonTitle;
+		$this->setButtonType();
+		$this->setButtonTitle();
+		$this->setButtonTitleIsHidden();
+		$this->setIconExists();
 	}
-
+	function setButtonType(){
+		if( !isset($this->type)){
+			if(isset($_GET['button_type']) && !is_null($_GET['button_type'])){
+				$this->title = $_GET['button_type'];
+			}
+			elseif(isset($this->id) && !is_null($this->db_result['type'])){
+				$this->type = $this->db_result['type'];
+			}
+			// else{
+			// 	$this->title = 'Default';
+			// }
+		}
+	}
+	function setIconExists(){
+		if (!isset($this->icon_exists)){
+			if(isset($_GET['icon_exists']) && !is_null($_GET['icon_exists'])){
+				$this->icon_exists = $_GET['icon_exists'];
+			}
+			elseif(isset($this->id) && (!is_null($this->db_result['icon_url']) || !is_null($this->db_result['icon_dir'])) ){
+				$this->icon_exists = 1;
+			}
+			else{
+				$this->icon_exists = 0;
+			}
+		}
+	}
+	function setButtonDemoId(){
+		//fill this in
+		return true;
+	}
 	function setButtonTitle(){
 		if( !isset($this->title)){
 			if(isset($_GET['button_title']) && !is_null($_GET['button_title'])){
@@ -44,31 +78,25 @@ class Button {
 				$this->title = $this->db_result['title'];
 			}
 			else{
-				$this->title = 'Default';
+				$rand = (string) rand(0,100);
+				$this->title = 'Default'.$rand;
 			}
 		}
 	}
+	function setButtonTitleIsHidden(){
+		if(!isset($this->title_is_hidden)){
+			if(isset($_GET['title_is_hidden']) && !is_null($_GET['title_is_hidden'])){
+				$this->title_is_hidden = $_GET['title_is_hidden'];
+			}
+			elseif(isset($this->id) && !is_null($this->db_result['title_is_hidden'])){
+				$this->title_is_hidden = $this->db_result['title_is_hidden'];
+			}
+			else{
+				$this->title_is_hidden = 0;
+			}
+		}
+	}
+
 }
 
-class db_connection{
-	var $con;
-	var $database = "test";
-	var $query;
-	var $response = array();
-
-	function __construct(){
-		$this->con = 	mysql_connect("localhost","root","root") or die(mysql_error());
-		$this->connect();
-	}
-	function connect(){
-		mysql_select_db($this->database, $this->con) or die(mysql_error());
-	}
-	function disconnect(){
-		mysql_close($this->con);
-	}
-	function exec($query){
-		$result = mysql_query($query) or die(mysql_error());
-		$this->response = mysql_fetch_array($result);		
-	}
-}
 ?>
