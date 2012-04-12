@@ -212,21 +212,6 @@ class Demo{
 
 }
 
-class Button {
-	var $id;
-	var $title;
-	var $icon_url;
-	var $icon_dir;
-	var $image_dir;
-	var $image_height;
-	var $image_width;
-	var $link_url;
-
-	function __construct(){
-		return true;
-	}
-
-}
 
 class db_connection{
 	var $con;

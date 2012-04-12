@@ -8,8 +8,13 @@
 </html>
 
 <?php
-include 'obj.php';
-$test = new Demo(); 
+include 'obj.php'; include 'button.php';
+$test = new Demo();
+//$test->saveDemo();
+
+
+
+
 //$test->id = 1;
 
 // $t1 = array("foo" => "bar", "hi" => "ho");
@@ -17,7 +22,7 @@ $test = new Demo();
 // 	print $key;
 // }
 
-$test->saveDemo();
+
 
 
 //works
