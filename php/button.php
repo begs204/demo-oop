@@ -18,6 +18,9 @@ class Button {
 	var $link_url;
 	var $type;
 	var $dir_root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/';
+	var $img_type = array("image/png","image/gif","image/jpeg","image/pjpeg","image/jpg","image/pdf","image/ico");
+	var $bad_char = array("~",",",".","<",">","!","@","#","$","%","^","&","*","(",")","-","_","+","=",";",":","/","?","[","]","{","}"," ");
+	var $img_max_size = 2000000000;
 
 	function __construct(){
 		$this->id = 1;
@@ -49,16 +52,21 @@ class Button {
 		$this->setImgUploaded();
 		$this->setImgDir();
 	}
+	function uploadImage(){
+		if($this->img_exists == 1 && $this->img_uploaded == 1 && isset($_FILES["b_img"]) && ($_FILES["b_img"]["size"] < $this->$img_max_size)){
+			$this->setImgDir;
+			move_uploaded_file($_FILES["b_img"]["tmp_name"], $this->img_dir);
+			chmod($this->img_dir,0777);
+		}
+	}
 	// function setImgHt(){
 	// 	if (!isset($this->img_ht) && $this->img_exists == 1){
-	// 		if($this->img_uploaded == 1){
+	// 		if($this->img_uploaded == 1 && isset($_FILES["b_img".$this->id])){//new uploaded image - pull from $_FILES
+
 
 	// 		}
 	// 	}
 	// }
-	function saveImg(){
-		return true;
-	}
 	function saveIcon(){
 		return true;
 	}
