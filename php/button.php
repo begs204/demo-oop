@@ -59,16 +59,19 @@ class Button {
 			chmod($this->img_dir,0777);
 		}
 	}
-	// function setImgHt(){
-	// 	if (!isset($this->img_ht) && $this->img_exists == 1){
-	// 		if($this->img_uploaded == 1 && isset($_FILES["b_img".$this->id])){//new uploaded image - pull from $_FILES
-
-
-	// 		}
-	// 	}
-	// }
+	function setImgDim(){
+		if ((!isset($this->img_ht) || !isset($this->img_ht)) && $this->img_exists == 1){//img will be saved already - doesn't matter if it's just been uploaded
+			$img_size = getimagesize($this->img_dir);
+			$this->img_ht = $img_size[0];
+			$this->img_w = $img_size[1];
+		}
+	}
 	function saveIcon(){
-		return true;
+		if($this->icon_exists == 1 && $this->icon_uploaded == 1 && isset($_FILES["b_icon"]) && ($_FILES["b_icon"]["size"] < ($this->$img_max_size/10))){//uploaded icon
+			$this->setIconDir;
+			move_uploaded_file($_FILES["b_icon"]["tmp_name"], $this->icon_dir);
+			chmod($this->icon_dir,0777);
+		}
 	}
 	function setImgDir(){//if img uploaded on current submit, overwrite. otherwise pick up previous dir if it exists
 		if (!isset($this->img_dir) && $this->img_exists == 1){
@@ -127,7 +130,7 @@ class Button {
 			if($this->icon_uploaded == 1){//overwrite curent
 				$rand = (string) rand(0,1000000);
 				$this->icon_dir = $this->dir_root. 'demos/test/icons'."$this->demo_id".$rand;
-				$this->saveIcon();
+				//$this->saveIcon();
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['icon_dir'])){
 				$this->icon_dir = $this->db_result['icon_dir'];
