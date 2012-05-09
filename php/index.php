@@ -1,14 +1,19 @@
 <html>
+<head>
 <h1>BD Demo Builder</h1>
+<?php include 'obj.php'; include 'button.php'; ?>
+</head>
 <body>
+<?php
+renderUserPage();
+?>
 </body>
 </html>
 
 <?php
-include 'obj.php'; include 'button.php';
 
 //exec
-renderUserPage();
+//renderUserPage();
 
 function determinePage(){
 	if(isset($_GET["page"]) && $_GET["page"] == 'user'){//user Page & temp default
@@ -30,13 +35,14 @@ function determinePage(){
 }
 function renderUserPage(){
 	$db = new db_connection();
+	$root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php';
 	$db_response = array();
 	$db->exec('select * from users;');
 	$db->disconnect();
 	$db_response = $db->response;
 	//print $db_response[0]['firstname'];
 	foreach ($db_response as $row) {
-		print $row['firstname'];
+		print '<a href="'.$root.'?page=demo&user='.$row['id'].'"" >'.$row['firstname'].'  '.$row['lastname'].'</a> <br>';
 	}
 }
 function renderDemoPage(){
