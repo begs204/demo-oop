@@ -1,5 +1,25 @@
 <?php
 
+//exec
+if (isset($_POST['meebo_action']) && $_POST['meebo_action'] == 'create_demo'){
+	print 'hey there';
+	$demo = new Demo();
+	$demo->dashboard_id
+	$demo->createDemo();
+
+	//send the page back to index.php
+	//header("Location: http://www.csnphilly.com");
+	if(isset($_POST['owner_id'])){
+		$header = $demo->dir_root.'demos/php/index.php?page=demo_detail&owner_id='.$_POST['owner_id'].'&demo_id='.$demo->id;
+		header("Location: ".$header);
+	}
+	else{
+		trigger_error("No Demo Defined", E_USER_ERROR);
+	}
+	
+}
+
+
 class Demo{
 
 	var $id;
@@ -13,24 +33,37 @@ class Demo{
 	var $db_result = array();
 	var $dir_root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/';
 
-	function __construct() {
-		$this->id = 2; //remove this eventually
+	function construct(){
 		$this->db_query();
 		$this->setDemoData();
+	}
+	// function __construct() {
+	// 	$this->id = 2; //remove this eventually
+	// 	$this->db_query();
+	// 	$this->setDemoData();
 
 		
-		//$this->setButtonData();
-		// if($this->isValid($this,$demo)){
-		// 	$this->saveDemo();
-		// 	return true;
+	// 	//$this->setButtonData();
+	// 	// if($this->isValid($this,$demo)){
+	// 	// 	$this->saveDemo();
+	// 	// 	return true;
 
-		// }
-		// else{
-		// 	echo 'the data wasn\'t valid';
-		// 	return false;
-		// }
+	// 	// }
+	// 	// else{
+	// 	// 	echo 'the data wasn\'t valid';
+	// 	// 	return false;
+	// 	// }
+	// }
+	function createDemo(){
+		$db_create = new db_connection();
+		$db_create->exec("select max(id) +1 from demo;");
+		if(!isset($this->id)){
+			$this->id = $db_create->response[0][0];
+		}
+		$db_create->disconnect();
+		print $this->id;
+		//$this->construct;
 	}
-
 	function db_query(){
 		if(isset($this->id)){
 			$db = new db_connection();
@@ -136,7 +169,7 @@ class Demo{
 	}
 	function setDemoName(){
 		if(!isset($this->name)){
-			if(isset($_GET['demo_name']) && !is_null($_GET['site_url'])){
+			if(isset($_GET['demo_name']) && !is_null($_GET['demo_name'])){
 				$this->name = $_GET['demo_name'];
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['demo_name'])){
@@ -197,8 +230,8 @@ class Demo{
 	}
 	function setDashboardID(){
 		if(!isset($this->dashboard_id)){
-			if(isset($_GET['dashboard_id']) && !is_null($_GET['dashboard_id'])){
-				$this->dashboard_id = $_GET['dashboard_id'];
+			if(isset($_GET['dashboard_id']) && !is_null($_POST['dashboard_id'])){
+				$this->dashboard_id = $_POST['dashboard_id'];
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['dashboard_id'])){
 				$this->dashboard_id = $this->db_result['dashboard_id'];
