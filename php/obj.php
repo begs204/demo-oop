@@ -231,7 +231,12 @@ class db_connection{
 	}
 	function exec($query){
 		$result = mysql_query($query) or die(mysql_error());
-		$this->response = mysql_fetch_array($result);		
+		$array_result = array();
+		//$this->response = mysql_fetch_array($result);		
+		while ($row = mysql_fetch_array($result)){
+			$array_result[] = $row;
+		}
+		$this->response = $array_result;
 	}
 }
 ?>

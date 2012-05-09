@@ -104,7 +104,7 @@ class Button {
 			if(isset($_GET['img_exists']) && !is_null($_GET['img_exists'])){
 				$this->img_exists = $_GET['img_exists'];
 			}
-			elseif(isset($this->id) && !is_null($this->db_result['img_ht']) && !is_null($this->db_result['img_w']) && !is_null($this->db_result['img_dir'])) ){
+			elseif(isset($this->id) && !is_null($this->db_result['img_ht']) && !is_null($this->db_result['img_w']) && !is_null($this->db_result['img_dir']) ){
 				$this->img_exists = 1;
 			}
 			else{
