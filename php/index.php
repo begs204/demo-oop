@@ -41,9 +41,12 @@ function renderUserPage(){
 	$db->disconnect();
 	$db_response = $db->response;
 	//print $db_response[0]['firstname'];
+
+	print '<h4> Users: </h4><div id = "content">';
 	foreach ($db_response as $row) {
 		print '<a href="'.$root.'?page=demo&user='.$row['id'].'"" >'.$row['firstname'].'  '.$row['lastname'].'</a> <br>';
 	}
+	print '</div>';
 }
 function renderDemoPage(){
 	return true;
