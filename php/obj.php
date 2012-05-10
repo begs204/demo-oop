@@ -4,18 +4,17 @@
 if (isset($_POST['meebo_action']) && $_POST['meebo_action'] == 'create_demo'){
 	print 'hey there';
 	$demo = new Demo();
-	$demo->dashboard_id
 	$demo->createDemo();
 
 	//send the page back to index.php
 	//header("Location: http://www.csnphilly.com");
-	if(isset($_POST['owner_id'])){
-		$header = $demo->dir_root.'demos/php/index.php?page=demo_detail&owner_id='.$_POST['owner_id'].'&demo_id='.$demo->id;
-		header("Location: ".$header);
-	}
-	else{
-		trigger_error("No Demo Defined", E_USER_ERROR);
-	}
+	// if(isset($_POST['owner_id'])){
+	// 	$header = $demo->dir_root.'demos/php/index.php?page=demo_detail&owner_id='.$_POST['owner_id'].'&demo_id='.$demo->id;
+	// 	header("Location: ".$header);
+	// }
+	// else{
+	// 	trigger_error("No Demo Defined", E_USER_ERROR);
+	// }
 	
 }
 
@@ -36,24 +35,28 @@ class Demo{
 	function construct(){
 		$this->db_query();
 		$this->setDemoData();
+		$this->saveDemo();
+		$this->routeDemoDetailPage();
 	}
-	// function __construct() {
-	// 	$this->id = 2; //remove this eventually
-	// 	$this->db_query();
-	// 	$this->setDemoData();
+	function setDemoData(){
+		//set the Demo variables
 
-		
-	// 	//$this->setButtonData();
-	// 	// if($this->isValid($this,$demo)){
-	// 	// 	$this->saveDemo();
-	// 	// 	return true;
-
-	// 	// }
-	// 	// else{
-	// 	// 	echo 'the data wasn\'t valid';
-	// 	// 	return false;
-	// 	// }
-	// }
+		$this->setDashboardID();
+		$this->setDemoDir();
+		$this->setOwnerID();
+		$this->setDemoName();
+		$this->setSiteURL();
+		$this->setDemoURL();
+	}
+	function routeDemoDetailPage(){
+		if(isset($this->owner_id)){
+			$header = $demo->dir_root.'demos/php/index.php?page=demo_detail&owner_id='.$this->owner_id.'&demo_id='.$this->id;
+			header("Location: ".$header);
+		}
+		else{
+			print 'no way jose';
+		}
+	}
 	function createDemo(){
 		$db_create = new db_connection();
 		$db_create->exec("select max(id) +1 from demo;");
@@ -61,8 +64,7 @@ class Demo{
 			$this->id = $db_create->response[0][0];
 		}
 		$db_create->disconnect();
-		print $this->id;
-		//$this->construct;
+		$this->construct();
 	}
 	function db_query(){
 		if(isset($this->id)){
@@ -85,9 +87,28 @@ class Demo{
 	function saveDemo(){
 		$save_param = array('demo_dir'=> $this->demo_dir, 'demo_name'=> $this->name, 'site_url'=> $this->site_url, 'demo_url'=> $this->demo_url, 'owner_id'=> $this->owner_id, 'dashboard_id'=> $this->dashboard_id);
 		$save_str="";
-
 		//Compose query string
-		if(isset($this->id)){//Record already exists - update it
+		if(isset($_POST['meebo_action']) && $_POST['meebo_action'] == 'create_demo') { //New demo - create record in database
+			$param_str = "";
+			$value_str = "";
+			foreach ($save_param as $key => $value) {
+				if(isset($value)){
+					$param_str = $param_str. $key. ", ";
+					if ($key == 'owner_id'){
+						$value_str = $value_str.$value. " ,";
+					}
+					else{
+						$value_str = $value_str."'" . $value. "' ,";
+					}
+				}
+			 } 
+			 $param_str = substr(rtrim($param_str), 0, -1);//trim trailing comma
+			 $value_str = substr(rtrim($value_str), 0, -1);
+
+			 $save_str = "insert into demo (".$param_str.") values (".$value_str.");";
+		}
+		
+		elseif(isset($this->id)){//Record already exists - update it
 			$save_str = "update demo set ";
 			foreach ($save_param as $key => $value) {
 				if(isset($value)){
@@ -103,30 +124,11 @@ class Demo{
 		$save_str = $save_str." where id = ".$this->id.";";	
 
 		}
-		else{ //New demo - create record in database
-			$param_str = "";
-			$value_str = "";
-			foreach ($save_param as $key => $value) {
-				if(isset($value)){
-					$param_str = $param_str. $key. ", ";
-					if ($key == 'owner_id'){
-						$value_str = $value_str.$value. " ,";
-					}
-					else{
-						$value_str = $value_str."'" . $value. "' ,";
-					}
-				}
-			 } 
-			 $param_str = substr(rtrim($param_str), 0, -1);
-			 $value_str = substr(rtrim($value_str), 0, -1);
 
-			 $save_str = "insert into demo (".$param_str.") values (".$value_str.");";
-		}
 
 		//execute database update
 		$db_save = new db_connection();
 		$db_save->exec($save_str);
-		//print $db_save->response;
 		$db_save->disconnect();
 
 	}
@@ -139,19 +141,7 @@ class Demo{
 		}
 		return $button_id;
 	}
-	function setDemoData(){
-		//set the Demo variables
 
-		$this->setDemoDir();
-		$this->setDemoName();
-		$this->setDashboardID();
-		$this->setSiteURL();
-		$this->setDemoURL();
-		$this->setOwnerID();
-
-
-
-	}
 	function isValid($item, $format){
 		//Fill this in
 		return true;
@@ -159,18 +149,22 @@ class Demo{
 	function setDemoDir(){
 		//Cannot be specified by user; set demo
 		if( !isset($this->demo_dir)){
-			if(isset($this->id) && !is_null($this->db_result['demo_dir'])){
+			$this->setDashboardID();//maybe take this out!
+			if(isset($this->dashboard_id)){//setDashboardId must be run first
+				$this->demo_dir= $this->dir_root.'demos/'.$this->dashboard_id;
+			}
+			elseif(isset($this->id) && !is_null($this->db_result['demo_dir'])){
 				$this->demo_dir = $this->db_result['demo_dir'];
 			}
 			else{
-				$this->demo_dir = $this->dir_root.'demos/test';
+				trigger_error("No dashboard_id Defined", E_USER_ERROR);
 			}
 		}
 	}
 	function setDemoName(){
 		if(!isset($this->name)){
-			if(isset($_GET['demo_name']) && !is_null($_GET['demo_name'])){
-				$this->name = $_GET['demo_name'];
+			if(isset($_POST['demo_name']) && !is_null($_POST['demo_name'])){
+				$this->name = $_POST['demo_name'];
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['demo_name'])){
 				$this->name = $this->db_result['demo_name'];
@@ -184,8 +178,8 @@ class Demo{
 
 	function setSiteURL(){
 		if(!isset($this->site_url)){
-			if(isset($_GET['site_url']) && !is_null($_GET['site_url'])){
-				$this->site_url = $_GET['site_url'];
+			if(isset($_POST['site_url']) && !is_null($_POST['site_url'])){
+				$this->site_url = $_POST['site_url'];
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['site_url'])){
 				$this->site_url = $this->db_result['site_url'];
@@ -199,26 +193,25 @@ class Demo{
 
 	function setDemoURL(){
 		if(!isset($this->demo_url)){
-			if(isset($this->id) && !is_null($this->db_result['demo_url'])){
+			if(isset($this->id) && !is_null($this->db_result['demo_url'])){//existing record
 				$this->demo_url = $this->db_result['demo_url'];
 			}
-			else{
-				$rand = (string) rand(0,1000000);
+			else{//new record
+				$rand = (string) rand(0,1000);
+				$date = (string) date(YmdHis);
 				if(isset($this->dashboard_id)){	
-					$this->demo_url = $this->dir_root.'demos/'.$this->dashboard_id.'/'.$rand;
+					$this->demo_url = $this->dir_root.'demos/'.$this->dashboard_id.'/'.$date.$rand;
 				}
 				else{
-					$this->demo_url = $this->dir_root.'demos/test/'.$rand;
-				}
-				
+					trigger_error("No dashboard_id Defined", E_USER_ERROR);
+				}				
 			}
-
 		}
 	}
 	function setOwnerID(){
 		if( !isset($this->$owner_id)){
-			if($_SESSION['owner_id']){
-				$this->$owner_id = $_SESSION['owner_id'];
+			if(isset($_POST['owner_id']) && !is_null($_POST['owner_id'])){
+				$this->$owner_id = $_POST['owner_id'];
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['owner_id'])){
 				$this->owner_id = $db_result['owner_id'];
@@ -230,7 +223,7 @@ class Demo{
 	}
 	function setDashboardID(){
 		if(!isset($this->dashboard_id)){
-			if(isset($_GET['dashboard_id']) && !is_null($_POST['dashboard_id'])){
+			if(isset($_POST['dashboard_id']) && !is_null($_POST['dashboard_id'])){
 				$this->dashboard_id = $_POST['dashboard_id'];
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['dashboard_id'])){
