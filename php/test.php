@@ -30,8 +30,13 @@ $("button#add_owner_button").click(function(){
 
 <?php
 
+include 'obj.php';
+$test = new Demo();
+$test->id = 4;
+$test->owner_id = 100;
+$test->routeDemoDetailPage();
 
-echo date(YmdHis);
+//echo date(YmdHis);
 
 
 

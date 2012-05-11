@@ -1,22 +1,15 @@
 <?php
 
 //exec
-if (isset($_POST['meebo_action']) && $_POST['meebo_action'] == 'create_demo'){
-	print 'hey there';
+//if (isset($_POST['meebo_action']) && $_POST['meebo_action'] == 'create_demo'){
 	$demo = new Demo();
-	$demo->createDemo();
+	$demo->id = 3;
+	$demo->construct();
+	$demo->routeDemoDetailPage();
+	//print 'hey there';
+	//$demo->createDemo();	
 
-	//send the page back to index.php
-	//header("Location: http://www.csnphilly.com");
-	// if(isset($_POST['owner_id'])){
-	// 	$header = $demo->dir_root.'demos/php/index.php?page=demo_detail&owner_id='.$_POST['owner_id'].'&demo_id='.$demo->id;
-	// 	header("Location: ".$header);
-	// }
-	// else{
-	// 	trigger_error("No Demo Defined", E_USER_ERROR);
-	// }
-	
-}
+//}
 
 
 class Demo{
@@ -35,8 +28,7 @@ class Demo{
 	function construct(){
 		$this->db_query();
 		$this->setDemoData();
-		$this->saveDemo();
-		$this->routeDemoDetailPage();
+
 	}
 	function setDemoData(){
 		//set the Demo variables
@@ -49,8 +41,8 @@ class Demo{
 		$this->setDemoURL();
 	}
 	function routeDemoDetailPage(){
-		if(isset($this->owner_id)){
-			$header = $demo->dir_root.'demos/php/index.php?page=demo_detail&owner_id='.$this->owner_id.'&demo_id='.$this->id;
+		if(isset($this->owner_id) && isset($this->id)){
+			$header = $this->dir_root.'index.php?page=demo_detail&owner_id='.$this->owner_id.'&demo_id='.$this->id;
 			header("Location: ".$header);
 		}
 		else{
@@ -62,9 +54,15 @@ class Demo{
 		$db_create->exec("select max(id) +1 from demo;");
 		if(!isset($this->id)){
 			$this->id = $db_create->response[0][0];
+			echo 'heyo';
 		}
 		$db_create->disconnect();
 		$this->construct();
+		$this->saveDemo();
+		$this->routeDemoDetailPage();
+
+
+		//remove!!!
 	}
 	function db_query(){
 		if(isset($this->id)){
@@ -211,8 +209,8 @@ class Demo{
 	function setOwnerID(){
 		if( !isset($this->$owner_id)){
 			if(isset($_POST['owner_id']) && !is_null($_POST['owner_id'])){
-				$this->$owner_id = $_POST['owner_id'];
-			}
+				$this->owner_id = $_POST['owner_id'];
+			}			
 			elseif(isset($this->id) && !is_null($this->db_result['owner_id'])){
 				$this->owner_id = $db_result['owner_id'];
 			}
