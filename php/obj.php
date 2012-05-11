@@ -4,9 +4,10 @@
 if (isset($_POST['meebo_action']) && $_POST['meebo_action'] == 'create_demo'){
 	$demo = new Demo();
 	$demo->createDemo();
-	//print 'hey there';
-	//$demo->createDemo();	
-
+}
+elseif(isset($_POST['meebo_action']) && $_POST['meebo_action'] == 'edit_demo'){
+	$demo = new Demo();
+	$demo->editDemo();
 }
 
 
@@ -40,7 +41,7 @@ class Demo{
 	}
 	function routeDemoDetailPage(){
 		if(isset($this->owner_id) && isset($this->id)){
-			$header = $this->dir_root.'index.php?page=demo_detail&owner_id='.$this->owner_id.'&demo_id='.$this->id;
+			$header = $this->dir_root.'demos/php/index.php?page=demo_detail&owner_id='.$this->owner_id.'&demo_id='.$this->id;
 			header("Location: ".$header);
 		}
 		else{
@@ -58,9 +59,6 @@ class Demo{
 		$this->construct();
 		$this->saveDemo();
 		$this->routeDemoDetailPage();
-
-
-		//remove!!!
 	}
 	function db_query(){
 		if(isset($this->id)){
@@ -75,9 +73,10 @@ class Demo{
 	}
 
 	function editDemo(){
-		//Fill this in!
-		echo '<form action="obj.php" method="post" enctype="multipart/form-data">';
-		
+		$this->id = $_POST['demo_id'];
+		$this->construct();
+		$this->saveDemo();
+		$this->routeDemoDetailPage();	
 	}
 
 	function saveDemo(){
