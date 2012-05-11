@@ -89,7 +89,19 @@ function renderDemoPage(){
 	print '</div>';
 }
 function renderDemoDetailPage(){
-	return truel;
+	//Show Current
+	$db_demo = new db_connection();
+	$root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php';
+	$db_demo_response = array();
+	$db_demo->exec('select id, demo_name, site_url, dashboard_id from demo where owner_id = '.$_GET['owner_id'].';');
+	$db_demo->disconnect();
+	$db_demo_response = $db_demo->response;
+
+	print '<h4> Demos: </h4><div id = "content">';
+	foreach ($db_response as $row) {
+		print '<a href="'.$root.'?page=demo_detail&owner_id='.$_GET['owner_id'].'&demo_id='.$row['id'].'" >'.$row['demo_name'].'</a>   '.$row['dashboard_id'].'  <a href="'.$row['site_url'].'">'.$row['site_url'].'</a> <br>';
+	}
+	print '</div>';
 }
 function renderButtonDetailPage(){
 	return true;

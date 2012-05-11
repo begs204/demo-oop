@@ -1,15 +1,13 @@
 <?php
 
 //exec
-//if (isset($_POST['meebo_action']) && $_POST['meebo_action'] == 'create_demo'){
+if (isset($_POST['meebo_action']) && $_POST['meebo_action'] == 'create_demo'){
 	$demo = new Demo();
-	$demo->id = 3;
-	$demo->construct();
-	$demo->routeDemoDetailPage();
+	$demo->createDemo();
 	//print 'hey there';
 	//$demo->createDemo();	
 
-//}
+}
 
 
 class Demo{
