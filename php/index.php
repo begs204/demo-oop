@@ -5,8 +5,9 @@
 </head>
 <body>
 <?php
-determinePage();
-//renderDemoPage();
+//determinePage();
+$_GET['demo_id'] = 1;
+renderDemoDetailPage();
 ?>
 </body>
 </html>
@@ -122,6 +123,32 @@ function renderDemoDetailPage(){
 
 		};
 		</script>';
+
+	//Show current buttons
+	//Render a link to go to the Button detail page and create new button
+	$db_button = new db_connection();
+	$db_button_response = array();
+	$db_button->exec('select * from buttons where demo_id = '.$_GET['demo_id'].';');
+	$db_button->disconnect();
+	$db_button_response = $db_button->response;
+
+	print '<h4> Buttons: </h4><div id = "buttons">';
+	foreach ($db_button_response as $row) {
+		print '<a href="'.$root.'?page=button_detail&owner_id='.$_GET['owner_id'].'&demo_id='.$_GET['demo_id'].'&button_id='.$row['id'].'" >'.$row['title'].'</a>';
+		if (isset($row['icon_url']) && !is_null($row['icon_url'])){
+			$icon = $row['icon_url'];
+		}
+		elseif(isset($row['icon_dir']) && !is_null($row['icon_dir'])){
+			$icon = $root.$row['icon_dir'];
+		}
+		else{
+			$icon = -1;
+		}
+		if ($icon != -1){
+		print '<img src="'.$icon.'"/>';			
+		}
+	}
+	print '</div>';
 
 //show buttons
 }
