@@ -21,6 +21,7 @@ class Button {
 	var $img_type = array("image/png","image/gif","image/jpeg","image/pjpeg","image/jpg","image/pdf","image/ico");
 	var $bad_char = array("~",",",".","<",">","!","@","#","$","%","^","&","*","(",")","-","_","+","=",";",":","/","?","[","]","{","}"," ");
 	var $img_max_size = 2000000000;
+	//var $date = date(YmdHis);
 
 	function __construct(){
 		$this->id = 1;
@@ -76,8 +77,10 @@ class Button {
 	function setImgDir(){//if img uploaded on current submit, overwrite. otherwise pick up previous dir if it exists
 		if (!isset($this->img_dir) && $this->img_exists == 1){
 			if($this->img_uploaded == 1){//overwrite curent
-				$rand = (string) rand(0,1000000);
-				$this->img_dir = $this->dir_root. 'demos/test/images/'."$this->demo_id".$rand;
+				//$rand = (string) rand(0,1000);
+				$date = (string) date(YmdHis);
+				$img_end = substr($_FILES["b_img"]["name"],strripos($_FILES["b_img"]["name"],"."));
+				$this->img_dir = $this->dir_root. 'demos/test/images/'."$this->demo_id".'img'."$this->button_id".$date.$img_end;
 				$this->saveImg();
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['icon_dir'])){

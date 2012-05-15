@@ -6,7 +6,7 @@
 <body>
 <?php
 //determinePage();
-$_GET['demo_id'] = 1;
+//$_GET['demo_id'] = 1;
 renderDemoDetailPage();
 ?>
 </body>
@@ -14,8 +14,6 @@ renderDemoDetailPage();
 
 <?php
 
-//exec
-//renderUserPage();
 
 function determinePage(){
 	if(isset($_GET["page"]) && $_GET["page"] == 'user'){//user Page & temp default
@@ -99,11 +97,6 @@ function renderDemoDetailPage(){
 	$db_demo_response = $db_demo->response[0];
 
 
-	//Name: '.$db_demo_response['demo_name'].'     Dashboard ID: '.$db_demo_response['dashboard_id'].'        URL: '.$db_demo_response['site_url'].' <br/> <br/>";
-	//<button type="button" onclick="update_demo_form()">Update</button>
-	// 		</script>';
-	// //print $update_str;
-
 	echo '<div id="demo_details">
 			<b>Demo Basics</b>
 			<form action="obj.php" method="post" enctype="multipart/form-data">
@@ -147,6 +140,15 @@ function renderDemoDetailPage(){
 		if ($icon != -1){
 		print '<img src="'.$icon.'"/>';			
 		}
+		if (isset($row['type']) && !is_null($row['type'])) {
+			 if($row['type'] == 'link' && isset($row['link_url']) && !is_null($row['link_url'])){
+			 	print '<a href="'.$row['link_url'].'">'.$row['link_url'].'</a>';
+			 }
+			 elseif($row['type'] == 'widget' && isset($row['img_dir']) && !is_null($row['img_dir']) && isset($row['img_w']) && !is_null($row['img_w']) && isset($row['img_ht']) && !is_null($row['img_ht'])){
+			 	print '<img src="'.$row['img_dir'].'" height="'.$row['img_ht'].'" width ="'.$row['img_w'].'" />';
+			 }
+		}
+		print '<br>';
 	}
 	print '</div>';
 
