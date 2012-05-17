@@ -128,7 +128,7 @@ function renderDemoDetailPage(){
 	$db_button->disconnect();
 	$db_button_response = $db_button->response;
 
-	print '<h4> Buttons: <a href="http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=create_button&button_type=none">Create New</a> <img src="http://www.aicrvolunteer.org/images/plus_icon.gif" onclick="top.location.href=\'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=create_button&button_type=none\'"/> </h4> 
+	print '<h4> Buttons: <a href="http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=create_button&button_type=none&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'">Create New</a> <img src="http://www.aicrvolunteer.org/images/plus_icon.gif" onclick="top.location.href=\'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=create_button&button_type=none&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'\'"/> </h4> 
 		<div id = "buttons">';
 	foreach ($db_button_response as $row) {
 		print '<a href="'.$root.'?page=button_detail&owner_id='.$_GET['owner_id'].'&demo_id='.$_GET['demo_id'].'&button_id='.$row['id'].'" >'.$row['title'].'</a>';
@@ -158,32 +158,29 @@ function renderDemoDetailPage(){
 }
 function renderCreateButtonPage(){
 	if(isset($_GET['button_type']) && $_GET['button_type'] == 'none'){//not set
+	$db_button = new db_connection();
+	$db_button_response = array();
+	$db_button->exec('select max(id) +1 as id from buttons;');
+	$db_button->disconnect();
+	$db_button_response = $db_button->response[0];
 	print '<div id = "create_button">
 		<select id="select_button_type">
 			<option value="widget">Widget</option>
 			<option value="link">Link</option>
 		</select>
 		<script type="text/javascript">
-		route = \'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=create_button&buton_type=\'+ document.getElementById(\'select_button_type\').value;
+		route = \'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=edit_button&button_type=\'+ document.getElementById(\'select_button_type\').value +\'&button_id='.$db_button_response['id'].'&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'\';
 		</script>
 		<button type="button" onclick="top.location.href=route">Next</button>
 		</div>
 	';
-}
-	elseif(isset($_GET['button_type']) && $_GET['button_type'] == 'widget'){
-	
-		print '<div id="create_button">
-				<b>New Buttons</b>
-				<form action="obj.php" method="post" enctype="multipart/form-data">
-				Demo Name: <input type="text" name="demo_name" value="'.$db_demo_response['demo_name'].'"/><br />
-				Dashboard ID <i>(lowercase & no spaces)</i>: <input type="text" name="dashboard_id" value="'.$db_demo_response['dashboard_id'].'"/><br />
-				URL: <input type="text" name="site_url" value="'.$db_demo_response['site_url'].'"/><br />
-				<input type="hidden" name="meebo_action" value ="edit_demo" />
-				<input type="hidden" name="demo_id" value ="'.$_GET['demo_id'].'" />
-				<input type="hidden" name="owner_id" value ="'.$_GET['owner_id'].'" />
-				<input type="submit" value="Update" />
-
-			</div>';
 	}
+	else{
+		print 'Error!';
+	}
+}
+function renderEditButtonPage(){
+
+
 }
 ?>
