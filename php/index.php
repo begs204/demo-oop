@@ -5,9 +5,9 @@
 </head>
 <body>
 <?php
-//determinePage();
+determinePage();
 //$_GET['demo_id'] = 1;
-renderDemoDetailPage();
+//renderDemoDetailPage();
 ?>
 </body>
 </html>
@@ -35,8 +35,11 @@ function determinePage(){
 			trigger_error("No Demo Defined", E_USER_ERROR);
 		}
 	}
-	elseif(isset($_GET["page"]) && $_GET["page"] == 'button_detail'){
-		renderButtonDetailPage();
+	elseif(isset($_GET["page"]) && $_GET["page"] == 'create_button'){
+		renderCreateButtonPage();
+	}
+	elseif(isset($_GET['page']) && $_GET['page'] = 'edit_button' && isset($_GET['button_id']) && isset($_GET['demo_id']) && isset($_GET['owner_id'])){
+		renderEditButtonPage();
 	}
 	else{
 		renderUserPage();
@@ -125,7 +128,8 @@ function renderDemoDetailPage(){
 	$db_button->disconnect();
 	$db_button_response = $db_button->response;
 
-	print '<h4> Buttons: </h4><div id = "buttons">';
+	print '<h4> Buttons: <a href="http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=create_button&button_type=none">Create New</a> <img src="http://www.aicrvolunteer.org/images/plus_icon.gif" onclick="top.location.href=\'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=create_button&button_type=none\'"/> </h4> 
+		<div id = "buttons">';
 	foreach ($db_button_response as $row) {
 		print '<a href="'.$root.'?page=button_detail&owner_id='.$_GET['owner_id'].'&demo_id='.$_GET['demo_id'].'&button_id='.$row['id'].'" >'.$row['title'].'</a>';
 		if (isset($row['icon_url']) && !is_null($row['icon_url'])){
@@ -151,10 +155,35 @@ function renderDemoDetailPage(){
 		print '<br>';
 	}
 	print '</div>';
-
-//show buttons
 }
-function renderButtonDetailPage(){
-	return true;
+function renderCreateButtonPage(){
+	if(isset($_GET['button_type']) && $_GET['button_type'] == 'none'){//not set
+	print '<div id = "create_button">
+		<select id="select_button_type">
+			<option value="widget">Widget</option>
+			<option value="link">Link</option>
+		</select>
+		<script type="text/javascript">
+		route = \'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=create_button&buton_type=\'+ document.getElementById(\'select_button_type\').value;
+		</script>
+		<button type="button" onclick="top.location.href=route">Next</button>
+		</div>
+	';
+}
+	elseif(isset($_GET['button_type']) && $_GET['button_type'] == 'widget'){
+	
+		print '<div id="create_button">
+				<b>New Buttons</b>
+				<form action="obj.php" method="post" enctype="multipart/form-data">
+				Demo Name: <input type="text" name="demo_name" value="'.$db_demo_response['demo_name'].'"/><br />
+				Dashboard ID <i>(lowercase & no spaces)</i>: <input type="text" name="dashboard_id" value="'.$db_demo_response['dashboard_id'].'"/><br />
+				URL: <input type="text" name="site_url" value="'.$db_demo_response['site_url'].'"/><br />
+				<input type="hidden" name="meebo_action" value ="edit_demo" />
+				<input type="hidden" name="demo_id" value ="'.$_GET['demo_id'].'" />
+				<input type="hidden" name="owner_id" value ="'.$_GET['owner_id'].'" />
+				<input type="submit" value="Update" />
+
+			</div>';
+	}
 }
 ?>
