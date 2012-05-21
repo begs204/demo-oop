@@ -1,5 +1,21 @@
 <?php
 
+include 'db.php';
+// $_POST['button_type'] = 'link';
+$_POST['demo_id'] = 1;
+$_POST['owner_id'] = 1;
+$_POST['meebo_action'] = 'create_button';
+
+
+if(isset($_POST['button_id']) && $_POST['meebo_action'] == 'edit_button'){
+	$button = new Button();
+	$button->editButton();
+}
+elseif($_POST['meebo_action'] == 'create_button'){	
+	$button = new Button();
+	$button->createButton();
+}
+
 class Button {
 	var $id;
 	var $demo_id;
@@ -23,8 +39,22 @@ class Button {
 	var $img_max_size = 2000000000;
 	//var $date = date(YmdHis);
 
-	function __construct(){
-		$this->id = 1;
+	function createButton(){
+	//set the button ID at execution (vs in index file) to prevent possible redundancy
+		$db_create = new db_connection();
+		$db_create->exec("select max(id) +1 as id from buttons;");
+		if(!isset($this->id)){
+			$this->id = $db_create->response[0][0];
+		}
+		$db_create->disconnect();
+		// $this->construct();
+		// $this->saveButton();
+		// $this->routeEditButtonPage();
+	}
+	function editButton(){
+		return true;
+	}
+	function construct(){
 		$this->db_query();
 		$this->setButtonData();
 		
@@ -42,16 +72,27 @@ class Button {
 	}
 	function setButtonData(){
 		$this->setButtonType();
-		$this->setButtonTitle();
-		$this->setButtonTitleIsHidden();
-		$this->setIconExists();
-		$this->setIconUploaded();
-		$this->setIconUrl();
-		$this->setIconDir();
-		$this->setIconIsLogo();
-		$this->setImgExists();
-		$this->setImgUploaded();
-		$this->setImgDir();
+		// $this->setButtonTitle();
+		// $this->setButtonTitleIsHidden();
+		// $this->setIconExists();
+		// $this->setIconUploaded();
+		// $this->setIconUrl();
+		// $this->setIconDir();
+		// $this->setIconIsLogo();
+		// $this->setImgExists();
+		// $this->setImgUploaded();
+		// $this->setImgDir();
+		echo $this->type;
+	}
+	function setButtonType(){
+		if( !isset($this->type)){
+			if(isset($_POST['button_type']) && !is_null($_POST['button_type'])){
+				$this->type = $_POST['button_type'];
+			}
+			elseif(isset($this->id) && !is_null($this->db_result['type'])){
+				$this->type = $this->db_result['type'];
+			}
+		}
 	}
 	function uploadImage(){
 		if($this->img_exists == 1 && $this->img_uploaded == 1 && isset($_FILES["b_img"]) && ($_FILES["b_img"]["size"] < $this->$img_max_size)){
@@ -94,8 +135,8 @@ class Button {
 	}
 	function setImgUploaded(){//Icon uploaded on current submit
 		if (!isset($this->img_uploaded) && $this->img_exists == 1){
-			if(isset($_GET['img_uploaded']) && !is_null($_GET['img_uploaded'])){
-				$this->img_uploaded = $_GET['img_uploaded'];
+			if(isset($_POST['img_uploaded']) && !is_null($_POST['img_uploaded'])){
+				$this->img_uploaded = $_POST['img_uploaded'];
 			}
 			else{
 				$this->img_uploaded = 0;
@@ -104,8 +145,8 @@ class Button {
 	}
 	function setImgExists(){
 		if (!isset($this->img_exists) && $this->button_type == 'widget'){
-			if(isset($_GET['img_exists']) && !is_null($_GET['img_exists'])){
-				$this->img_exists = $_GET['img_exists'];
+			if(isset($_POST['img_exists']) && !is_null($_POST['img_exists'])){
+				$this->img_exists = $_POST['img_exists'];
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['img_ht']) && !is_null($this->db_result['img_w']) && !is_null($this->db_result['img_dir']) ){
 				$this->img_exists = 1;
@@ -117,8 +158,8 @@ class Button {
 	}
 	function setIconIsLogo(){
 		if(!isset($this->icon_is_logo) && $this->icon_exists == 1){
-			if(isset($_GET['icon_is_logo']) && !is_null($_GET['icon_is_logo'])){
-				$this->icon_is_logo = $_GET['icon_is_logo'];
+			if(isset($_POST['icon_is_logo']) && !is_null($_POST['icon_is_logo'])){
+				$this->icon_is_logo = $_POST['icon_is_logo'];
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['icon_is_logo'])){
 				$this->icon_is_logo = $this->db_result['icon_is_logo'];
@@ -142,8 +183,8 @@ class Button {
 	}
 	function setIconUploaded(){//Icon uploaded on current submit
 		if (!isset($this->icon_uploaded) && $this->icon_exists == 1){
-			if(isset($_GET['icon_uploaded']) && !is_null($_GET['icon_uploaded'])){
-				$this->icon_uploaded = $_GET['icon_uploaded'];
+			if(isset($_POST['icon_uploaded']) && !is_null($_POST['icon_uploaded'])){
+				$this->icon_uploaded = $_POST['icon_uploaded'];
 			}
 			else{
 				$this->icon_uploaded = 0;
@@ -152,28 +193,19 @@ class Button {
 	}
 	function setIconUrl(){
 		if (!isset($this->icon_url) && $this->icon_exists == 1){
-			if(isset($_GET['icon_url']) && !is_null($_GET['icon_url'])){
-				$this->icon_url = $_GET['icon_url'];
+			if(isset($_POST['icon_url']) && !is_null($_POST['icon_url'])){
+				$this->icon_url = $_POST['icon_url'];
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['icon_url'])){
 				$this->icon_url = $this->db_result['icon_url'];
 			}
 		}
 	}
-	function setButtonType(){
-		if( !isset($this->type)){
-			if(isset($_GET['button_type']) && !is_null($_GET['button_type'])){
-				$this->type = $_GET['button_type'];
-			}
-			elseif(isset($this->id) && !is_null($this->db_result['type'])){
-				$this->type = $this->db_result['type'];
-			}
-		}
-	}
+
 	function setIconExists(){
 		if (!isset($this->icon_exists)){
-			if(isset($_GET['icon_exists']) && !is_null($_GET['icon_exists'])){
-				$this->icon_exists = $_GET['icon_exists'];
+			if(isset($_POST['icon_exists']) && !is_null($_POST['icon_exists'])){
+				$this->icon_exists = $_POST['icon_exists'];
 			}
 			elseif(isset($this->id) && (!is_null($this->db_result['icon_url']) || !is_null($this->db_result['icon_dir'])) ){
 				$this->icon_exists = 1;
@@ -189,8 +221,8 @@ class Button {
 	}
 	function setButtonTitle(){
 		if( !isset($this->title)){
-			if(isset($_GET['button_title']) && !is_null($_GET['button_title'])){
-				$this->title = $_GET['button_title'];
+			if(isset($_POST['button_title']) && !is_null($_POST['button_title'])){
+				$this->title = $_POST['button_title'];
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['title'])){
 				$this->title = $this->db_result['title'];
@@ -203,14 +235,14 @@ class Button {
 	}
 	function setButtonTitleIsHidden(){
 		if(!isset($this->title_is_hidden)){
-			if(isset($_GET['title_is_hidden']) && !is_null($_GET['title_is_hidden'])){
-				$this->title_is_hidden = $_GET['title_is_hidden'];
+			if(isset($_POST['title_is_hidden']) && !is_null($_POST['title_is_hidden'])){
+				$this->title_is_hidden = $_POST['title_is_hidden'];
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['title_is_hidden'])){
 				$this->title_is_hidden = $this->db_result['title_is_hidden'];
 			}
 			else{
-				$this->title_is_hidden = 0;
+				$this->title_is_hidden = null;
 			}
 		}
 	}

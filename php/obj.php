@@ -53,7 +53,7 @@ class Demo{
 		$db_create->exec("select max(id) +1 from demo;");
 		if(!isset($this->id)){
 			$this->id = $db_create->response[0][0];
-			echo 'heyo';
+			//echo 'heyo';
 		}
 		$db_create->disconnect();
 		$this->construct();

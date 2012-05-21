@@ -5,9 +5,12 @@
 </head>
 <body>
 <?php
-determinePage();
-//$_GET['demo_id'] = 1;
-//renderDemoDetailPage();
+//determinePage();
+// $_GET['demo_id'] = 1; 
+// $_GET['owner_id'] = 1;
+// $_GET['button_type'] = 'widget';
+$_GET['button_id'] = 1;
+ renderEditButtonPage();
 ?>
 </body>
 </html>
@@ -38,7 +41,7 @@ function determinePage(){
 	elseif(isset($_GET["page"]) && $_GET["page"] == 'create_button'){
 		renderCreateButtonPage();
 	}
-	elseif(isset($_GET['page']) && $_GET['page'] = 'edit_button' && isset($_GET['button_id']) && isset($_GET['demo_id']) && isset($_GET['owner_id'])){
+	elseif(isset($_GET['page']) && $_GET['page'] = 'edit_button' && isset($_GET['demo_id']) && isset($_GET['owner_id'])){
 		renderEditButtonPage();
 	}
 	else{
@@ -110,15 +113,9 @@ function renderDemoDetailPage(){
 			<input type="hidden" name="demo_id" value ="'.$_GET['demo_id'].'" />
 			<input type="hidden" name="owner_id" value ="'.$_GET['owner_id'].'" />
 			<input type="submit" value="Update" />
-
+			</form>
 		</div>
-		<hr><hr>
-		<script type="text/javascript">
-		function update_demo_form(){
-			alert("hey");
-
-		};
-		</script>';
+		<hr><hr>';
 
 	//Show current buttons
 	//Render a link to go to the Button detail page and create new button
@@ -158,28 +155,70 @@ function renderDemoDetailPage(){
 }
 function renderCreateButtonPage(){
 	if(isset($_GET['button_type']) && $_GET['button_type'] == 'none'){//not set
-	$db_button = new db_connection();
-	$db_button_response = array();
-	$db_button->exec('select max(id) +1 as id from buttons;');
-	$db_button->disconnect();
-	$db_button_response = $db_button->response[0];
 	print '<div id = "create_button">
 		<select id="select_button_type">
 			<option value="widget">Widget</option>
 			<option value="link">Link</option>
 		</select>
 		<script type="text/javascript">
-		route = \'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=edit_button&button_type=\'+ document.getElementById(\'select_button_type\').value +\'&button_id='.$db_button_response['id'].'&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'\';
+		route = \'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=edit_button&button_type=\'+ document.getElementById(\'select_button_type\').value +\'&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'\';
 		</script>
 		<button type="button" onclick="top.location.href=route">Next</button>
 		</div>
 	';
 	}
 	else{
-		print 'Error!';
+		print 'Error - Invalid Params!';
 	}
 }
 function renderEditButtonPage(){
+	$meebo_action= 'create_button';
+	if(isset($_GET['button_id'])){
+		$db_button = new db_connection();
+		$db_button_response = array();
+		$db_button->exec('select * from buttons where id = '.$_GET['button_id'].';');
+		$db_button->disconnect();
+		$db_button_response = $db_button->response[0];
+		$meebo_action= 'edit_button';
+	}
+		if ($_GET['button_type'] == 'widget'){
+			print '<div id="button_details">
+				<b>Button Details</b>
+				<form action="button.php" method="post" enctype="multipart/form-data">
+				Button Text: <input type="text" name="title" value="'.$db_button_response['title'].'"/>
+				Hide Text: <input type="checkbox" name="title_is_hidden" value="'.$db_button_response['title_is_hidden'].'"/> <br />
+				Icon <i>Link</i>: <input type="text" name="icon_url" value="'.$db_buton_response['icon_url'].'"/>
+				or Upload: <input type="file" name="b_icon" /> <img id="b_icon_img" src="'.$db_button_response['icon_dir'].'" /><br /><br />
+
+				Expanded State: <input type="file" name="b_img" /> <img id="b_icon_img" src="'.$db_button_response['img_dir'].'" /><br />
+				<input type="hidden" name="meebo_action" value ="'.$meebo_action.'" />
+				<input type="hidden" name="button_id" value ="'.$_GET['button_id'].'" />
+				<input type="hidden" name="demo_id" value ="'.$_GET['demo_id'].'" />
+				<input type="hidden" name="owner_id" value ="'.$_GET['owner_id'].'" />
+				<input type="submit" value="Create/Update" />
+				</form>
+			</div>
+			<hr><hr>';
+		}
+		elseif($_GET['button_type']=='link'){
+			print '<div id="button_details">
+				<b>Button Details</b>
+				<form action="button.php" method="post" enctype="multipart/form-data">
+				Button Text: <input type="text" name="title" value="'.$db_button_response['title'].'"/>
+				Hide Text: <input type="checkbox" name="title_is_hidden" value="'.$db_button_response['title_is_hidden'].'"/> <br />
+				Icon <i>Link</i>: <input type="text" name="icon_url" value="'.$db_buton_response['icon_url'].'"/>
+				or Upload: <input type="file" name="b_icon" /> <img id="b_icon_img" src="'.$db_button_response['icon_dir'].'" /><br /><br />
+
+				Link Address: <input type="text" name="link_url" value="'.$db_button_response['link_url'].'"/>
+				<input type="hidden" name="meebo_action" value ="'.$meebo_action.'" />
+				<input type="hidden" name="button_id" value ="'.$_GET['button_id'].'" />
+				<input type="hidden" name="demo_id" value ="'.$_GET['demo_id'].'" />
+				<input type="hidden" name="owner_id" value ="'.$_GET['owner_id'].'" /><br />
+				<input type="submit" value="Create/Update" />
+				</form>
+			</div>
+			<hr><hr>';
+		}
 
 
 }
