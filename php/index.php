@@ -5,12 +5,12 @@
 </head>
 <body>
 <?php
-//determinePage();
+determinePage();
 // $_GET['demo_id'] = 1; 
 // $_GET['owner_id'] = 1;
-// $_GET['button_type'] = 'widget';
-$_GET['button_id'] = 1;
- renderEditButtonPage();
+// $_GET['button_type'] = 'link';
+// // $_GET['button_id'] = 1;
+//renderEditButtonPage();
 ?>
 </body>
 </html>
@@ -179,46 +179,53 @@ function renderEditButtonPage(){
 		$db_button->exec('select * from buttons where id = '.$_GET['button_id'].';');
 		$db_button->disconnect();
 		$db_button_response = $db_button->response[0];
-		$meebo_action= 'edit_button';
-	}
-		if ($_GET['button_type'] == 'widget'){
-			print '<div id="button_details">
-				<b>Button Details</b>
-				<form action="button.php" method="post" enctype="multipart/form-data">
-				Button Text: <input type="text" name="title" value="'.$db_button_response['title'].'"/>
-				Hide Text: <input type="checkbox" name="title_is_hidden" value="'.$db_button_response['title_is_hidden'].'"/> <br />
-				Icon <i>Link</i>: <input type="text" name="icon_url" value="'.$db_buton_response['icon_url'].'"/>
-				or Upload: <input type="file" name="b_icon" /> <img id="b_icon_img" src="'.$db_button_response['icon_dir'].'" /><br /><br />
+		
+		$title_is_hidden = '';
+		if($db_buton_response['title_is_hidden'] == 1){
+			$title_is_hidden = 'checked="checked"';
+		}
 
-				Expanded State: <input type="file" name="b_img" /> <img id="b_icon_img" src="'.$db_button_response['img_dir'].'" /><br />
-				<input type="hidden" name="meebo_action" value ="'.$meebo_action.'" />
+	}
+
+		print '
+			<script type="text/javascript">
+			function icon_upload(){
+				document.getElementById("icon_details").innerHTML = \'<input type="file" name="b_icon" value="'.$db_button_response['icon_dir'].'"/> <img id="b_icon_img" src="'.$db_button_response['icon_dir'].'" />\';
+			}
+			function icon_link(){
+				document.getElementById("icon_details").innerHTML = \'<i>Link</i>: <input type="text" name="icon_url" value="'.$db_buton_response['icon_url'].'"/>\';
+			}
+			</script>
+			<div id="button_details">
+			<b>Button Details</b>
+			<form action="button.php" method="post" enctype="multipart/form-data">
+			Button Text: <input type="text" name="button_title" value="'.$db_button_response['title'].'"/>
+			Hide Text: <input type="radio" name="title_is_hidden" '.$title_is_hidden.' /> <br /> <br />
+			
+			<div id = "icon">
+			<button type="button" onclick="icon_upload()" >Upload Icon</button>
+			<button type="button" onclick="icon_link()" >Link Icon Image</button><br /><br />
+				<div id="icon_details"></div>
+			</div>
+
+			<br /><br />';
+		if ($_GET['button_type'] == 'widget'){
+			print ' Expanded State: <input type="file" name="b_img" /> <img id="b_icon_img" src="'.$db_button_response['img_dir'].'" /><br />';
+
+		}
+		elseif($_GET['button_type']=='link'){
+			print '
+				Link Address: <input type="text" name="link_url" value="'.$db_button_response['link_url'].'"/>';
+		}
+		print '<input type="hidden" name="meebo_action" value ="'.$meebo_action.'" />
 				<input type="hidden" name="button_id" value ="'.$_GET['button_id'].'" />
 				<input type="hidden" name="demo_id" value ="'.$_GET['demo_id'].'" />
 				<input type="hidden" name="owner_id" value ="'.$_GET['owner_id'].'" />
+				<input type="hidden" name="button_type" value ="'.$_GET['button_type'].'" /><br />
 				<input type="submit" value="Create/Update" />
 				</form>
 			</div>
 			<hr><hr>';
-		}
-		elseif($_GET['button_type']=='link'){
-			print '<div id="button_details">
-				<b>Button Details</b>
-				<form action="button.php" method="post" enctype="multipart/form-data">
-				Button Text: <input type="text" name="title" value="'.$db_button_response['title'].'"/>
-				Hide Text: <input type="checkbox" name="title_is_hidden" value="'.$db_button_response['title_is_hidden'].'"/> <br />
-				Icon <i>Link</i>: <input type="text" name="icon_url" value="'.$db_buton_response['icon_url'].'"/>
-				or Upload: <input type="file" name="b_icon" /> <img id="b_icon_img" src="'.$db_button_response['icon_dir'].'" /><br /><br />
-
-				Link Address: <input type="text" name="link_url" value="'.$db_button_response['link_url'].'"/>
-				<input type="hidden" name="meebo_action" value ="'.$meebo_action.'" />
-				<input type="hidden" name="button_id" value ="'.$_GET['button_id'].'" />
-				<input type="hidden" name="demo_id" value ="'.$_GET['demo_id'].'" />
-				<input type="hidden" name="owner_id" value ="'.$_GET['owner_id'].'" /><br />
-				<input type="submit" value="Create/Update" />
-				</form>
-			</div>
-			<hr><hr>';
-		}
 
 
 }
