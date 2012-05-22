@@ -156,14 +156,14 @@ function renderDemoDetailPage(){
 function renderCreateButtonPage(){
 	if(isset($_GET['button_type']) && $_GET['button_type'] == 'none'){//not set
 	print '<div id = "create_button">
-		<select id="select_button_type">
-			<option value="widget">Widget</option>
-			<option value="link">Link</option>
-		</select>
-		<script type="text/javascript">
-		route = \'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=edit_button&meebo_action=create_button&button_type=\'+ document.getElementById(\'select_button_type\').value +\'&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'\';
-		</script>
-		<button type="button" onclick="top.location.href=route">Next</button>
+		<form action="button.php" method="post" enctype="multipart/form-data">
+			Widget<input type="radio" name="button_type" value="widget" />     
+			Link<input type="radio" name="button_type" value="link" /><br />
+			<input type="hidden" name="meebo_action" value ="create_button" />
+			<input type="hidden" name="demo_id" value ="'.$_GET['demo_id'].'" />
+			<input type="hidden" name="owner_id" value ="'.$_GET['owner_id'].'" />
+			<input type="submit" value="Next" />
+		</form>
 		</div>
 	';
 	}
@@ -235,3 +235,14 @@ function renderEditButtonPage(){
 
 }
 ?>
+
+<!-- <div id = "create_button">
+		<select id="select_button_type">
+			<option value="widget">Widget</option>
+			<option value="link">Link</option>
+		</select>
+		<script type="text/javascript">
+		route = \'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=edit_button&meebo_action=create_button&button_type=\'+ document.getElementById(\'select_button_type\').value +\'&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'\';
+		</script>
+		<button type="button" onclick="top.location.href=route">Next</button>
+		</div> -->

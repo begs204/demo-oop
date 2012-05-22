@@ -49,10 +49,14 @@ class Button {
 	//set the button ID at execution (vs in index file) to prevent possible redundancy
 		$db_create = new db_connection();
 		$db_create->exec("insert into buttons (demo_id) values(null);");
-		if(!isset($this->id)){
-			$this->id = $db_create->response[0][0];
-		}
 		$db_create->disconnect();
+		$db_create2 = new db_connection();
+		$db_create2->exec("select max(id) as id from buttons;");
+		$db_create2->disconnect();
+		if(!isset($this->id)){
+			$this->id = $db_create2->response[0][0];
+		}
+		print $this->id;
 		$this->routeEditButtonPage();
 
 	}
@@ -278,7 +282,7 @@ class Button {
 			$this->setButtonDemoId();
 			$this->setButtonOwnerId();
 			$this->setButtonType();
-			$header = $this->dir_root.'demos/php/index.php?page=edit_button&button_type='.$this->type.'&owner_id='.$this->owner_id.'&demo_id='.$this->id.'&button_id='.$this->id;
+			$header = $this->dir_root.'demos/php/index.php?page=edit_button&button_type='.$this->type.'&owner_id='.$this->owner_id.'&demo_id='.$this->demo_id.'&button_id='.$this->id;
 			header("Location: ".$header);
 		}
 		else{
