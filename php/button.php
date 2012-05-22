@@ -80,18 +80,15 @@ class Button {
 		$this->setButtonDemoId();
 		$this->setButtonTitle();
 		$this->setButtonTitleIsHidden();
-		//// $this->setIconExists();
-		//// $this->setIconUploaded();
 		$this->setIconUrl();
-		//// $this->setIconDir();
 		$this->setIconIsLogo();
 		$this->uploadIcon();
 		$this->setLinkUrl();
-		//// $this->setImgExists();
-		//// $this->setImgUploaded();
 		$this->setImgDir();
 		$this->uploadImg();
-		//print $this->img_dir;
+		$this->setImgDim();
+		$this->saveButton();
+		//print $this->img_w;
 	}
 	function setButtonType(){
 		if( !isset($this->type)){
@@ -170,7 +167,7 @@ class Button {
 			}
 		}
 	}
-	function uploadIcon(){
+	function uploadIcon(){//move_uploaded_file will overwrite existing by default :)
 		if(isset($_FILES["b_icon"]) && ($_FILES["b_icon"]["size"] < ($this->img_max_size/10)) && in_array($_FILES["b_icon"]["type"],$this->img_type) ){
 			$this->setIconUrl();
 			move_uploaded_file($_FILES["b_icon"]["tmp_name"], $this->icon_dir);
@@ -207,13 +204,63 @@ class Button {
 		}
 	}
 	function setImgDim(){
-		if ((!isset($this->img_ht) || !isset($this->img_ht)) && $this->img_exists == 1){//img will be saved already - doesn't matter if it's just been uploaded
+		if ((!isset($this->img_ht) || !isset($this->img_ht)) && isset($this->img_dir) && $this->type = 'widget'){//img will be saved already - doesn't matter if it's just been uploaded
 			$img_size = getimagesize($this->img_dir);
-			$this->img_ht = $img_size[0];
-			$this->img_w = $img_size[1];
+			$this->img_ht = $img_size[1];
+			$this->img_w = $img_size[0];
 		}
 	}
+	function saveButton(){
+		$save_param = array('demo_id' => $this->demo_id, 'title'=>$this->title, 'title_is_hidden'=>$this->title_is_hidden,
+				'icon_url'=>$this->icon_url, 'icon_is_logo'=>$this->icon_is_logo, 'icon_dir'=>$this->icon_dir, 'img_ht'=>$this->img_ht,
+				'img_w'=>$this->img_w, 'img_dir'=>$this->img_dir, 'link_url'=>$this->link_url, 'type'=>$this->type);
+		$save_str="";
+		$numeric_array = array('demo_id', 'title_is_hidden', 'icon_is_logo', 'img_ht', 'img_w' );
+		//Compose query string
+		if(isset($_POST['meebo_action']) && $_POST['meebo_action'] == 'create_button') { //New demo - create record in database
+			$param_str = "";
+			$value_str = "";
+			foreach ($save_param as $key => $value) {
+				if(isset($value)){
+					$param_str = $param_str. $key. ", ";
+					if ( in_array($key, $numeric_array) ){
+						$value_str = $value_str.$value. " ,";
+					}
+					else{
+						$value_str = $value_str."'" . $value. "' ,";
+					}
+				}
+			 } 
+			 $param_str = substr(rtrim($param_str), 0, -1);//trim trailing comma
+			 $value_str = substr(rtrim($value_str), 0, -1);
 
+			 $save_str = "insert into buttons (".$param_str.") values (".$value_str.");";
+		}
+		
+		elseif(isset($this->id)){//Record already exists - update it
+			$save_str = "update buttons set ";
+			foreach ($save_param as $key => $value) {
+				if(isset($value)){
+					if (in_array($key, $numeric_array)){
+						$save_str = $save_str . $key." = ". $value . ", ";
+					}
+					else{
+						$save_str = $save_str . $key." = '". $value . "', ";
+					}
+				}	
+			}
+		$save_str = substr(rtrim($save_str), 0, -1);
+		$save_str = $save_str." where id = ".$this->id.";";	
+
+		}
+
+		print $save_str;
+		//execute database update
+		$db_save = new db_connection();
+		$db_save->exec($save_str);
+		$db_save->disconnect();
+
+	}
 	// function setImgUploaded(){//Icon uploaded on current submit
 	// 	if (!isset($this->img_uploaded) && $this->img_exists == 1){
 	// 		if(isset($_POST['img_uploaded']) && !is_null($_POST['img_uploaded'])){
