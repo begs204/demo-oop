@@ -2,8 +2,8 @@
 
 include_once 'db.php';
 
-// error_reporting(E_ALL); 
-// ini_set("display_errors", 1);
+error_reporting(E_ALL); 
+ini_set("display_errors", 1);
 
 // $_POST['button_type'] = 'link';
 // $_POST['demo_id'] = 1;
@@ -71,7 +71,7 @@ class Button {
 	function construct(){
 		$this->db_query();
 		$this->setButtonData();
-		
+
 	}
 	function db_query(){
 		if(isset($this->id)){
@@ -252,7 +252,7 @@ class Button {
 
 			 $save_str = "insert into buttons (".$param_str.") values (".$value_str.");";
 		}
-		
+
 		elseif(isset($this->id)){//Record already exists - update it
 			$save_str = "update buttons set ";
 			foreach ($save_param as $key => $value) {
@@ -289,6 +289,15 @@ class Button {
 			print 'no way jose';
 		}
 	}
+	// 	function cleanDatabase(){
+	// 	if (isset($this->id)){
+	// 		$db_clean = new db_connection();
+	// 		$id_min = $this->id - 25;
+	// 		print $id_min;
+	// 		// $db_clean->exec('delete from buttons where demo_id is null and id < '.$id_min.';');
+	// 		$db_create->disconnect();
+	// 	}
+	// }
 }
 
 ?>
