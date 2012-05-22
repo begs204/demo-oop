@@ -1,6 +1,8 @@
 <?php
 
 include_once 'db.php';
+include_once 'create_index.php';
+
 //exec
 if (isset($_POST['meebo_action']) && $_POST['meebo_action'] == 'create_demo'){
 	$demo = new Demo();
@@ -73,14 +75,12 @@ class Demo{
 			echo 'No ID passed';
 		}
 	}
-
 	function editDemo(){
 		$this->id = $_POST['demo_id'];
 		$this->construct();
 		$this->saveDemo();
 		$this->routeDemoDetailPage();	
 	}
-
 	function saveDemo(){
 		$save_param = array('demo_dir'=> $this->demo_dir, 'demo_name'=> $this->name, 'site_url'=> $this->site_url, 'demo_url'=> $this->demo_url, 'owner_id'=> $this->owner_id, 'dashboard_id'=> $this->dashboard_id);
 		$save_str="";
@@ -185,24 +185,6 @@ class Demo{
 
 		}
 	}
-
-	// function setDemoURL(){
-	// 	if(!isset($this->demo_url)){
-	// 		if(isset($this->id) && !is_null($this->db_result['demo_url'])){//existing record
-	// 			$this->demo_url = $this->db_result['demo_url'];
-	// 		}
-	// 		else{//new record
-	// 			$rand = (string) rand(0,1000);
-	// 			$date = (string) date(YmdHis);
-	// 			if(isset($this->dashboard_id)){	
-	// 				$this->demo_url = $this->dir_root.'demos/'.$this->dashboard_id.'/'.$date.$rand;
-	// 			}
-	// 			else{
-	// 				trigger_error("No dashboard_id Defined", E_USER_ERROR);
-	// 			}				
-	// 		}
-	// 	}
-	// }
 	function setOwnerID(){
 		if( !isset($this->$owner_id)){
 			if(isset($_POST['owner_id']) && !is_null($_POST['owner_id'])){
@@ -229,6 +211,14 @@ class Demo{
 			}
 
 		}
+	}
+	function createIndex(){
+		$index = new IndexFile();
+		$index->site_url = $this->site_url;
+		$index->demo_url=$this->demo_url;
+		$index->dashboard_id=$this->dashboard_id;
+		$index->createString();
+		print $index->string;
 	}
 
 }
