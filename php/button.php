@@ -27,13 +27,10 @@ class Button {
 	var $title;
 	var $owner_id;
 	var $title_is_hidden;
-	var $icon_exists;
-	var $icon_uploaded;
 	var $icon_url;
 	var $icon_is_logo;
 	var $icon_dir;
-	var $img_exists;
-	var $img_uploaded;
+	var $img_url;
 	var $img_dir;
 	var $img_ht;
 	var $img_w;
@@ -206,9 +203,11 @@ class Button {
 				$date = (string) date(YmdHis);
 				$img_end = substr($_FILES["b_img"]["name"],strripos($_FILES["b_img"]["name"],"."));
 				$this->img_dir = '/var/www/html/demos/test/images/'."$this->demo_id".'img'."$this->id".$date.$img_end;
+				$this->img_url = $this->dir_root. 'demos/test/images/'."$this->demo_id".'img'."$this->id".$date.$img_end;
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['img_dir'])){
 				$this->img_dir = $this->db_result['img_dir'];
+				$this->img_url = $this->db_result['img_url'];
 			}
 		}
 	}
@@ -229,7 +228,7 @@ class Button {
 	function saveButton(){
 		$save_param = array('demo_id' => $this->demo_id, 'title'=>$this->title, 'title_is_hidden'=>$this->title_is_hidden,
 				'icon_url'=>$this->icon_url, 'icon_is_logo'=>$this->icon_is_logo, 'icon_dir'=>$this->icon_dir, 'img_ht'=>$this->img_ht,
-				'img_w'=>$this->img_w, 'img_dir'=>$this->img_dir, 'link_url'=>$this->link_url, 'type'=>$this->type);
+				'img_w'=>$this->img_w, 'img_dir'=>$this->img_dir, 'link_url'=>$this->link_url, 'type'=>$this->type, 'img_url'=>$this->img_url);
 		$save_str="";
 		$numeric_array = array('demo_id', 'title_is_hidden', 'icon_is_logo', 'img_ht', 'img_w' );
 		//Compose query string
