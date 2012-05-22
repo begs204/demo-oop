@@ -63,6 +63,7 @@ class Demo{
 		$this->construct();
 		$this->saveDemo();
 		$this->routeDemoDetailPage();
+		$this->createIndex();
 	}
 	function db_query(){
 		if(isset($this->id)){
@@ -80,6 +81,7 @@ class Demo{
 		$this->construct();
 		$this->saveDemo();
 		$this->routeDemoDetailPage();	
+		$this->createIndex();
 	}
 	function saveDemo(){
 		$save_param = array('demo_dir'=> $this->demo_dir, 'demo_name'=> $this->name, 'site_url'=> $this->site_url, 'demo_url'=> $this->demo_url, 'owner_id'=> $this->owner_id, 'dashboard_id'=> $this->dashboard_id);
@@ -216,9 +218,9 @@ class Demo{
 		$index = new IndexFile();
 		$index->site_url = $this->site_url;
 		$index->demo_url=$this->demo_url;
+		$index->demo_dir=$this->demo_dir;
 		$index->dashboard_id=$this->dashboard_id;
-		$index->createString();
-		print $index->string;
+		$index->saveIndex();
 	}
 
 }

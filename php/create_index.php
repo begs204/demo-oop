@@ -7,14 +7,16 @@ ini_set("display_errors", 1);
 	$ind->site_url = 'http://www.cnn.com';
 	$ind->dashboard_id = 'ross_test4';
 	$ind->demo_url= 'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/files/16tesssting20120522201621';
+	$ind->demo_dir ='/var/www/html/demos/files/16tesssting20120522201621'; 
 	$ind->createString();
-	echo $ind->string;
+	$ind->saveIndex();
 
 class IndexFile{
 	var $site_url;
 	var $dashboard_id;
 	var $demo_url;
 	var $string;
+	var $demo_dir;
 
 	function createString(){
 		$this->string = '
@@ -52,6 +54,14 @@ class IndexFile{
 			<script type="text/javascript" src="'.$this->demo_url.'.js"></script>
 			</body>
 			</html>';
+	}
+
+	function saveIndex(){
+		$this->createString();
+		$file = fopen($this->demo_dir.'.html', 'w+');
+		fwrite($file, $this->string);
+		fclose($file);
+		chmod($this->demo_dir.'.html',0777);
 	}
 
 }
