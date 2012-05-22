@@ -36,6 +36,7 @@ class Button {
 	var $img_ht;
 	var $img_w;
 	var $link_url;
+	var $demo_dir;
 	var $type;
 	var $dir_root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/';
 	var $img_type = array("image/png","image/gif","image/jpeg","image/pjpeg","image/jpg","image/pdf","image/ico");
@@ -54,7 +55,6 @@ class Button {
 		if(!isset($this->id)){
 			$this->id = $db_create2->response[0][0];
 		}
-		print $this->id;
 		$this->routeEditButtonPage();
 
 	}
@@ -64,7 +64,8 @@ class Button {
 		}
 		$this->construct();
 		$this->saveButton();
-		$this->routeEditButtonPage();
+		//$this->routeEditButtonPage();
+		$this->createJSFile();
 	}
 	function construct(){
 		$this->db_query();
@@ -85,6 +86,7 @@ class Button {
 	function setButtonData(){
 		$this->setButtonType();
 		$this->setButtonDemoId();
+		$this->setButtonDemoDir();
 		$this->setButtonOwnerId();
 		$this->setButtonTitle();
 		$this->setButtonTitleIsHidden();
@@ -96,6 +98,15 @@ class Button {
 		$this->uploadImg();
 		$this->setImgDim();
 		//print $this->img_w;
+	}
+	function setButtonDemoDir(){
+		if(!isset($this->demo_dir) && isset($this->demo_id)){
+		$db_demo_id = new db_connection();
+		$db_demo_id->exec('select demo_dir from demo where id = '.$this->demo_id.';');
+		$db_demo_id_response = $db_demo_id->response;
+		$db_demo_id->disconnect();
+		$this->demo_dir = $db_demo_id_response[0][0];
+		}
 	}
 	function setButtonType(){
 		if( !isset($this->type)){
@@ -270,7 +281,7 @@ class Button {
 
 		}
 
-		print $save_str;
+		//print $save_str;
 		//execute database update
 		$db_save = new db_connection();
 		$db_save->exec($save_str);
@@ -292,7 +303,16 @@ class Button {
 	function createJSFile(){
 		$db_js = new db_connection();
 		$db_js->exec('select * from buttons where demo_id = '.$this->demo_id.';');
+		$db_js_response = $db_js->response;
 		$db_js->disconnect();
+
+		$js_script = new JSFile();
+		$js_script->demo_dir = $this->demo_dir;
+		foreach ($db_js_response as $row) {
+			$js_button = new JSButton();
+
+
+		}
 	}
 	// 	function cleanDatabase(){
 	// 	if (isset($this->id)){
