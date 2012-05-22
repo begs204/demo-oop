@@ -215,7 +215,7 @@ function renderEditButtonPage(){
 
 			<br /><br />';
 		if ($_GET['button_type'] == 'widget'){
-			print ' Expanded State: <input type="file" name="b_img" /> <img id="b_icon_img" src="'.$db_button_response['img_dir'].'" /><br />';
+			print ' Expanded State: <input type="file" name="b_img" /> <img id="b_expanded_img" src="'.$db_button_response['img_dir'].'" /><br />';
 
 		}
 		elseif($_GET['button_type']=='link'){
