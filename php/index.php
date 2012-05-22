@@ -181,13 +181,17 @@ function renderEditButtonPage(){
 		$db_button_response = $db_button->response[0];
 		
 		$title_is_hidden = '';
-		if($db_buton_response['title_is_hidden'] == 1){
+		if($db_button_response['title_is_hidden'] == 1){
 			$title_is_hidden = 'checked="checked"';
+		}
+		$icon_is_logo = '';
+		if($db_button_response['icon_is_logo'] == 1){
+			$icon_is_logo = 'checked="checked"';
 		}
 
 	}
 
-		print '
+		print ' 
 			<script type="text/javascript">
 			function icon_upload(){
 				document.getElementById("icon_details").innerHTML = \'<input type="file" name="b_icon" value="'.$db_button_response['icon_dir'].'"/> <img id="b_icon_img" src="'.$db_button_response['icon_dir'].'" />\';
@@ -202,9 +206,10 @@ function renderEditButtonPage(){
 			Button Text: <input type="text" name="button_title" value="'.$db_button_response['title'].'"/>
 			Hide Text: <input type="radio" name="title_is_hidden" '.$title_is_hidden.' /> <br /> <br />
 			
-			<div id = "icon">
 			<button type="button" onclick="icon_upload()" >Upload Icon</button>
-			<button type="button" onclick="icon_link()" >Link Icon Image</button><br /><br />
+			<button type="button" onclick="icon_link()" >Link Icon Image</button>
+			Icon is Logo: <input type="radio" name="icon_is_logo" '.$icon_is_logo.' />
+			<div id = "icon">  <br /><br />
 				<div id="icon_details"></div>
 			</div>
 

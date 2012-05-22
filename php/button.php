@@ -1,11 +1,15 @@
 <?php
 
 include_once 'db.php';
+// error_reporting(E_ALL); 
+// ini_set("display_errors", 1);
+
 // $_POST['button_type'] = 'link';
 // $_POST['demo_id'] = 1;
 // $_POST['owner_id'] = 1;
 // $_POST['meebo_action'] = 'create_button';
-//print $_POST['title_is_hidden'];
+//print $_FILES["b_icon"]["size"];
+
 
 if(isset($_POST['button_id']) && $_POST['meebo_action'] == 'edit_button'){
 	$button = new Button();
@@ -78,12 +82,13 @@ class Button {
 		//// $this->setIconExists();
 		//// $this->setIconUploaded();
 		$this->setIconUrl();
-		// $this->setIconDir();
-		// $this->setIconIsLogo();
-		// $this->setImgExists();
+		//// $this->setIconDir();
+		$this->setIconIsLogo();
+		$this->uploadIcon();
+		//// $this->setImgExists();
 		// $this->setImgUploaded();
 		// $this->setImgDir();
-		print $this->icon_url;
+		//print $this->icon_is_logo;
 	}
 	function setButtonType(){
 		if( !isset($this->type)){
@@ -141,10 +146,32 @@ class Button {
 				$date = (string) date(YmdHis);
 				$icon_end = substr($_FILES["b_icon"]["name"],strripos($_FILES["b_icon"]["name"],"."));
 				$this->icon_url = $this->dir_root. 'demos/test/icons/'."$this->demo_id".'icon'."$this->button_id".$date.$icon_end;
+				$this->icon_dir = '/var/www/html/demos/test/icons/'."$this->demo_id".'icon'."$this->button_id".$date.$icon_end;
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['icon_url'])){
 				$this->icon_url = $this->db_result['icon_url'];
+				$this->icon_dir = $this->db_result['icon_dir'];
 			}
+		}
+	}
+	function setIconIsLogo(){
+		if(!isset($this->icon_is_logo)){
+			if(isset($_POST['icon_is_logo']) && !is_null($_POST['icon_is_logo'])){
+				$this->icon_is_logo = 1;
+			}
+			elseif(isset($this->id) && !is_null($this->db_result['icon_is_logo'])){
+				$this->icon_is_logo = $this->db_result['icon_is_logo'];
+			}
+			else{
+				$this->icon_is_logo = 0;
+			}
+		}
+	}
+	function uploadIcon(){
+		if(isset($_FILES["b_icon"]) && ($_FILES["b_icon"]["size"] < ($this->img_max_size/10)) && in_array($_FILES["b_icon"]["type"],$this->img_type) ){
+			$this->setIconUrl();
+			move_uploaded_file($_FILES["b_icon"]["tmp_name"], $this->icon_dir);
+			chmod($this->icon_dir,0777);
 		}
 	}
 	function uploadImage(){
@@ -161,13 +188,7 @@ class Button {
 			$this->img_w = $img_size[1];
 		}
 	}
-	function saveIcon(){
-		if($this->icon_exists == 1 && $this->icon_uploaded == 1 && isset($_FILES["b_icon"]) && ($_FILES["b_icon"]["size"] < ($this->$img_max_size/10))){//uploaded icon
-			$this->setIconDir;
-			move_uploaded_file($_FILES["b_icon"]["tmp_name"], $this->icon_dir);
-			chmod($this->icon_dir,0777);
-		}
-	}
+
 	function setImgDir(){//if img uploaded on current submit, overwrite. otherwise pick up previous dir if it exists
 		if (!isset($this->img_dir) && $this->img_exists == 1){
 			if($this->img_uploaded == 1){//overwrite curent
@@ -209,19 +230,7 @@ class Button {
 			}
 		}
 	}
-	function setIconIsLogo(){
-		if(!isset($this->icon_is_logo) && $this->icon_exists == 1){
-			if(isset($_POST['icon_is_logo']) && !is_null($_POST['icon_is_logo'])){
-				$this->icon_is_logo = $_POST['icon_is_logo'];
-			}
-			elseif(isset($this->id) && !is_null($this->db_result['icon_is_logo'])){
-				$this->icon_is_logo = $this->db_result['icon_is_logo'];
-			}
-			else{
-				$this->icon_is_logo = 0;
-			}
-		}
-	}
+
 
 
 
