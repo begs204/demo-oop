@@ -310,6 +310,7 @@ class Button {
 		$js_script->demo_dir = $this->demo_dir;
 		foreach ($db_js_response as $row) {
 			$js_button = new JSButton();
+			$js_button->button_id = $row['id'];
 			$js_button->icon_url = $row['icon_url'];
 			$js_button->icon_is_logo = $row['icon_is_logo'];
 			$js_button->title = $row['title'];

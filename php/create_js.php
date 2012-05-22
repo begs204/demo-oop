@@ -45,26 +45,26 @@ class JSButton{
 		$this->img_w = (string) $this->img_w + 4;
 		$this->img_ht = (string) $this->img_ht + 4;
 		$width_js = 'width:'.$this->img_w.',';
-		$height_js = 'height'.$this->img_ht.',';
-
+		$height_js = 'height:'.$this->img_ht.',';
+		$button_id_string = (string) $this->button_id;
 		$this->button_string= '
 		Meebo(\'addButton\',{
-		id:"mb_'.$this->button_id.'",
+		id:"mb_'.$button_id_string.'",
 		type:"widget",
 		'.$icon_js.'
 		'.$title_js.'
 		'.$width_js.'
-		'.$height_js.',
+		'.$height_js.'
 				notResizable:true,
 				noBorder:true,
 		onCreate:function(widget,element){
 				
-					var mb_'.$this->button_id.'div=document.createElement(\'div\');
-					var mb_'.$this->button_id.'img=document.createElement(\'img\');
+					var mb_'.$button_id_string.'div=document.createElement(\'div\');
+					var mb_'.$button_id_string.'img=document.createElement(\'img\');
 					
-					mb_aimg.src="'.$this->img_url.'";	
-					mb_adiv.appendChild(mb_'.$this->button_id.'img);
-					element.appendChild(mb_'.$this->button_id.'div);
+					mb_'.$button_id_string.'img.src="'.$this->img_url.'";	
+					mb_'.$button_id_string.'div.appendChild(mb_'.$button_id_string.'img);
+					element.appendChild(mb_'.$button_id_string.'div);
 				}	
 		});
 
