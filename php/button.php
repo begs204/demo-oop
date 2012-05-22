@@ -3,8 +3,8 @@
 include_once 'db.php';
 include_once 'create_js.php';
 
-// error_reporting(E_ALL); 
-// ini_set("display_errors", 1);
+error_reporting(E_ALL); 
+ini_set("display_errors", 1);
 
 // $_POST['button_type'] = 'link';
 // $_POST['demo_id'] = 1;
@@ -64,7 +64,7 @@ class Button {
 		}
 		$this->construct();
 		$this->saveButton();
-		//$this->routeEditButtonPage();
+		$this->routeEditButtonPage();
 		$this->createJSFile();
 	}
 	function construct(){
@@ -310,9 +310,24 @@ class Button {
 		$js_script->demo_dir = $this->demo_dir;
 		foreach ($db_js_response as $row) {
 			$js_button = new JSButton();
-
-
+			$js_button->icon_url = $row['icon_url'];
+			$js_button->icon_is_logo = $row['icon_is_logo'];
+			$js_button->title = $row['title'];
+			$js_button->title_is_hidden = $row['title_is_hidden'];
+			if($row['type'] == 'link'){
+				$js_button->link_url = $row['link_url'];
+				$js_button->createLink();
+			}
+			elseif($row['type'] == 'widget'){
+				$js_button->img_url = $row['img_url'];
+				$js_button->img_w = $row['img_w'];
+				$js_button->img_ht = $row['img_ht'];
+				$js_button->createWidget();
+			}
+			print $js_button->button_string;
+			$js_script->string = $js_script->string.$js_button->button_string;
 		}
+		$js_script->saveJSFile();
 	}
 	// 	function cleanDatabase(){
 	// 	if (isset($this->id)){

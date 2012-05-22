@@ -47,7 +47,7 @@ class JSButton{
 		$width_js = 'width:'.$this->img_w.',';
 		$height_js = 'height'.$this->img_ht.',';
 
-		$button_string= '
+		$this->button_string= '
 		Meebo(\'addButton\',{
 		id:"mb_'.$this->button_id.'",
 		type:"widget",
@@ -66,7 +66,9 @@ class JSButton{
 					mb_adiv.appendChild(mb_'.$this->button_id.'img);
 					element.appendChild(mb_'.$this->button_id.'div);
 				}	
-		});';
+		});
+
+		';
 	}
 
 	function createLink(){
@@ -88,14 +90,16 @@ class JSButton{
 		else{
 			$title_js = '""';
 		}
-		$button_string='    
+		$this->button_string='    
 			Meebo(\'addButton\', {
 			id:"mb_'.$this->button_id.'",
 	        type: "action",
 	        '.$icon_js.'
 			'.$title_js.' 
 	        onClick: function(){ document.location="'.$this->link_url.'"; } 
-    		});';
+    		});
+
+			';
 
 	}	
 }
