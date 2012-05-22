@@ -190,7 +190,7 @@ function renderEditButtonPage(){
 			$title_is_hidden = 'checked="checked"';
 		}
 		if(isset($db_button_response['icon_url'])){
-			$icon_html = '<img id="icon_img" src="'.$db_button_response['icon_url'].'">';
+			$icon_html = '<img id="icon_img" width="16" height="16" src="'.$db_button_response['icon_url'].'">';
 		}
 		$icon_is_logo = '';
 		if($db_button_response['icon_is_logo'] == 1){
@@ -215,8 +215,8 @@ function renderEditButtonPage(){
 					document.getElementById("icon_img").style.width = '.$icon_w_new.';
 				}
 					else{
-					document.getElementById("icon_img").style.height = icon_ht_raw;
-					document.getElementById("icon_img").style.width = icon_w_raw;
+					document.getElementById("icon_img").style.height = 16;
+					document.getElementById("icon_img").style.width = 16;
 				}
 			}
 			</script>
