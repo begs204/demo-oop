@@ -25,6 +25,7 @@ class Button {
 	var $id;
 	var $demo_id;
 	var $title;
+	var $owner_id;
 	var $title_is_hidden;
 	var $icon_exists;
 	var $icon_uploaded;
@@ -47,17 +48,21 @@ class Button {
 	function createButton(){
 	//set the button ID at execution (vs in index file) to prevent possible redundancy
 		$db_create = new db_connection();
-		$db_create->exec("select max(id) +1 as id from buttons;");
+		$db_create->exec("insert into buttons (demo_id) values(null);");
 		if(!isset($this->id)){
 			$this->id = $db_create->response[0][0];
 		}
 		$db_create->disconnect();
-		$this->construct();
-		// $this->saveButton();
-		// $this->routeEditButtonPage();
+		$this->routeEditButtonPage();
+
 	}
 	function editButton(){
-		return true;
+		if(!isset($this->id) && isset($_POST['button_id'])){
+			$this->id = $_POST['button_id'];
+		}
+		$this->construct();
+		$this->saveButton();
+		$this->routeEditButtonPage();
 	}
 	function construct(){
 		$this->db_query();
@@ -78,6 +83,7 @@ class Button {
 	function setButtonData(){
 		$this->setButtonType();
 		$this->setButtonDemoId();
+		$this->setButtonOwnerId();
 		$this->setButtonTitle();
 		$this->setButtonTitleIsHidden();
 		$this->setIconUrl();
@@ -87,7 +93,6 @@ class Button {
 		$this->setImgDir();
 		$this->uploadImg();
 		$this->setImgDim();
-		$this->saveButton();
 		//print $this->img_w;
 	}
 	function setButtonType(){
@@ -109,6 +114,13 @@ class Button {
 				$this->demo_id = $this->db_result['demo_id'];
 			}
 		}
+	}
+	function setButtonOwnerId(){
+		if( !isset($this->$owner_id)){
+			if(isset($_POST['owner_id']) && !is_null($_POST['owner_id'])){
+				$this->owner_id = $_POST['owner_id'];
+			}
+		}	
 	}
 	function setButtonTitle(){
 		if( !isset($this->title)){
@@ -261,57 +273,18 @@ class Button {
 		$db_save->disconnect();
 
 	}
-	// function setImgUploaded(){//Icon uploaded on current submit
-	// 	if (!isset($this->img_uploaded) && $this->img_exists == 1){
-	// 		if(isset($_POST['img_uploaded']) && !is_null($_POST['img_uploaded'])){
-	// 			$this->img_uploaded = $_POST['img_uploaded'];
-	// 		}
-	// 		else{
-	// 			$this->img_uploaded = 0;
-	// 		}
-	// 	}
-	// }
-	// function setImgExists(){
-	// 	if (!isset($this->img_exists) && $this->button_type == 'widget'){
-	// 		if(isset($_POST['img_exists']) && !is_null($_POST['img_exists'])){
-	// 			$this->img_exists = $_POST['img_exists'];
-	// 		}
-	// 		elseif(isset($this->id) && !is_null($this->db_result['img_ht']) && !is_null($this->db_result['img_w']) && !is_null($this->db_result['img_dir']) ){
-	// 			$this->img_exists = 1;
-	// 		}
-	// 		else{
-	// 			$this->img_exists = 0;
-	// 		}
-	// 	}
-	// }
-
-
-
-
-	// function setIconExists(){
-	// 	if (!isset($this->icon_exists)){
-	// 		if(isset($_POST['icon_exists']) && !is_null($_POST['icon_exists'])){
-	// 			$this->icon_exists = $_POST['icon_exists'];
-	// 		}
-	// 		elseif(isset($this->id) && (!is_null($this->db_result['icon_url']) || !is_null($this->db_result['icon_dir'])) ){
-	// 			$this->icon_exists = 1;
-	// 		}
-	// 		else{
-	// 			$this->icon_exists = 0;
-	// 		}
-	// 	}
-	// }
-	// function setIconUploaded(){//Icon uploaded on current submit
-	// 	if (!isset($this->icon_uploaded) && $this->icon_exists == 1){
-	// 		if(isset($_POST['icon_uploaded']) && !is_null($_POST['icon_uploaded'])){
-	// 			$this->icon_uploaded = $_POST['icon_uploaded'];
-	// 		}
-	// 		else{
-	// 			$this->icon_uploaded = 0;
-	// 		}
-	// 	}
-	// }
-
+	function routeEditButtonPage(){
+		if(isset($this->id)){
+			$this->setButtonDemoId();
+			$this->setButtonOwnerId();
+			$this->setButtonType();
+			$header = $this->dir_root.'demos/php/index.php?page=edit_button&button_type='.$this->type.'&owner_id='.$this->owner_id.'&demo_id='.$this->id.'&button_id='.$this->id;
+			header("Location: ".$header);
+		}
+		else{
+			print 'no way jose';
+		}
+	}
 }
 
 ?>

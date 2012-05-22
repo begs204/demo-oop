@@ -161,7 +161,7 @@ function renderCreateButtonPage(){
 			<option value="link">Link</option>
 		</select>
 		<script type="text/javascript">
-		route = \'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=edit_button&button_type=\'+ document.getElementById(\'select_button_type\').value +\'&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'\';
+		route = \'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=edit_button&meebo_action=create_button&button_type=\'+ document.getElementById(\'select_button_type\').value +\'&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'\';
 		</script>
 		<button type="button" onclick="top.location.href=route">Next</button>
 		</div>
