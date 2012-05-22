@@ -1,9 +1,10 @@
 <?php
 
 include_once 'db.php';
+include_once 'create_js.php';
 
-error_reporting(E_ALL); 
-ini_set("display_errors", 1);
+// error_reporting(E_ALL); 
+// ini_set("display_errors", 1);
 
 // $_POST['button_type'] = 'link';
 // $_POST['demo_id'] = 1;
@@ -287,6 +288,11 @@ class Button {
 		else{
 			print 'no way jose';
 		}
+	}
+	function createJSFile(){
+		$db_js = new db_connection();
+		$db_js->exec('select * from buttons where demo_id = '.$this->demo_id.';');
+		$db_js->disconnect();
 	}
 	// 	function cleanDatabase(){
 	// 	if (isset($this->id)){

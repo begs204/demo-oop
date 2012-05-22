@@ -2,14 +2,14 @@
 
 error_reporting(E_ALL); 
 ini_set("display_errors", 1);
-	$ind = new IndexFile();
+	// $ind = new IndexFile();
 
-	$ind->site_url = 'http://www.cnn.com';
-	$ind->dashboard_id = 'ross_test4';
-	$ind->demo_url= 'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/files/16tesssting20120522201621';
-	$ind->demo_dir ='/var/www/html/demos/files/16tesssting20120522201621'; 
-	$ind->createString();
-	$ind->saveIndex();
+	// $ind->site_url = 'http://www.cnn.com';
+	// $ind->dashboard_id = 'ross_test4';
+	// $ind->demo_url= 'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/files/16tesssting20120522201621';
+	// $ind->demo_dir ='/var/www/html/demos/files/16tesssting20120522201621'; 
+	// $ind->createString();
+	// $ind->saveIndex();
 
 class IndexFile{
 	var $site_url;

@@ -222,6 +222,5 @@ class Demo{
 		$index->dashboard_id=$this->dashboard_id;
 		$index->saveIndex();
 	}
-
 }
 ?>
