@@ -23,6 +23,7 @@ class Demo{
 	var $demo_dir;
 	var $buttons = array();
 	var $db_result = array();
+	var $filename;
 	var $dir_root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/';
 
 	function construct(){
@@ -38,7 +39,7 @@ class Demo{
 		$this->setOwnerID();
 		$this->setDemoName();
 		$this->setSiteURL();
-		$this->setDemoURL();
+		// $this->setDemoURL();
 	}
 	function routeDemoDetailPage(){
 		if(isset($this->owner_id) && isset($this->id)){
@@ -128,29 +129,27 @@ class Demo{
 		$db_save->disconnect();
 
 	}
-
-	function setButtonData(){
-		$button_id = 0;
-		while ($this->buttons[$button_id] = new Button()){
-			//...
-			$button_id++;
-		}
-		return $button_id;
-	}
-
 	function isValid($item, $format){
 		//Fill this in
 		return true;
 	}
+	function setFileName(){
+		if( !isset($this->demo_dir) && isset($this->id) && isset($this->dashboard_id)){
+			$date = (string) date(YmdHis);
+			$this->filename = $this->id.$this->dashboard_id.$date;
+		}
+	}
 	function setDemoDir(){
 		//Cannot be specified by user; set demo
-		if( !isset($this->demo_dir)){
-			$this->setDashboardID();//maybe take this out!
+		if( !isset($this->demo_dir) || !isset($this->demo_url)){
+			$this->setFileName();//maybe take this out!
 			if(isset($this->dashboard_id)){//setDashboardId must be run first
-				$this->demo_dir= $this->dir_root.'demos/'.$this->dashboard_id;
+				$this->demo_dir='/var/www/html/demos/files/'.$this->filename;
+				$this->demo_url=$this->dir_root.'demos/files/'.$this->filename;
 			}
 			elseif(isset($this->id) && !is_null($this->db_result['demo_dir'])){
 				$this->demo_dir = $this->db_result['demo_dir'];
+				$this->demo_url = $this->db_result['demo_url'];
 			}
 			else{
 				trigger_error("No dashboard_id Defined", E_USER_ERROR);
@@ -187,23 +186,23 @@ class Demo{
 		}
 	}
 
-	function setDemoURL(){
-		if(!isset($this->demo_url)){
-			if(isset($this->id) && !is_null($this->db_result['demo_url'])){//existing record
-				$this->demo_url = $this->db_result['demo_url'];
-			}
-			else{//new record
-				$rand = (string) rand(0,1000);
-				$date = (string) date(YmdHis);
-				if(isset($this->dashboard_id)){	
-					$this->demo_url = $this->dir_root.'demos/'.$this->dashboard_id.'/'.$date.$rand;
-				}
-				else{
-					trigger_error("No dashboard_id Defined", E_USER_ERROR);
-				}				
-			}
-		}
-	}
+	// function setDemoURL(){
+	// 	if(!isset($this->demo_url)){
+	// 		if(isset($this->id) && !is_null($this->db_result['demo_url'])){//existing record
+	// 			$this->demo_url = $this->db_result['demo_url'];
+	// 		}
+	// 		else{//new record
+	// 			$rand = (string) rand(0,1000);
+	// 			$date = (string) date(YmdHis);
+	// 			if(isset($this->dashboard_id)){	
+	// 				$this->demo_url = $this->dir_root.'demos/'.$this->dashboard_id.'/'.$date.$rand;
+	// 			}
+	// 			else{
+	// 				trigger_error("No dashboard_id Defined", E_USER_ERROR);
+	// 			}				
+	// 		}
+	// 	}
+	// }
 	function setOwnerID(){
 		if( !isset($this->$owner_id)){
 			if(isset($_POST['owner_id']) && !is_null($_POST['owner_id'])){

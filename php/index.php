@@ -132,9 +132,9 @@ function renderDemoDetailPage(){
 		if (isset($row['icon_url']) && !is_null($row['icon_url'])){
 			$icon = $row['icon_url'];
 		}
-		elseif(isset($row['icon_dir']) && !is_null($row['icon_dir'])){
-			$icon = $root.$row['icon_dir'];
-		}
+		// elseif(isset($row['icon_dir']) && !is_null($row['icon_dir'])){
+		// 	$icon = $root.$row['icon_dir'];
+		// }
 		else{
 			$icon = -1;
 		}
@@ -145,8 +145,8 @@ function renderDemoDetailPage(){
 			 if($row['type'] == 'link' && isset($row['link_url']) && !is_null($row['link_url'])){
 			 	print '<a href="'.$row['link_url'].'">'.$row['link_url'].'</a>';
 			 }
-			 elseif($row['type'] == 'widget' && isset($row['img_dir']) && !is_null($row['img_dir']) && isset($row['img_w']) && !is_null($row['img_w']) && isset($row['img_ht']) && !is_null($row['img_ht'])){
-			 	print '<img src="'.$row['img_dir'].'" height="'.$row['img_ht'].'" width ="'.$row['img_w'].'" />';
+			 elseif($row['type'] == 'widget' && isset($row['img_url']) && !is_null($row['img_url']) && isset($row['img_w']) && !is_null($row['img_w']) && isset($row['img_ht']) && !is_null($row['img_ht'])){
+			 	print '<img src="'.$row['img_url'].'" height="'.$row['img_ht'].'" width ="'.$row['img_w'].'" />';
 			 }
 		}
 		print '<br>';
