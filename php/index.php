@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" type="text/css" href="/demos/css/master.css" />
 <h1>BD Demo Builder</h1>
 <?php include 'obj.php'; include 'button.php'; ?>
 </head>
@@ -16,7 +17,7 @@ determinePage();
 </html>
 
 <?php
- $dir_root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/';
+ $dir_root = 'http://ec2-50-16-117-221.compute-1.amazonaws.com/';
 
 function determinePage(){
 	if(isset($_GET["page"]) && $_GET["page"] == 'user'){//user Page & temp default
@@ -51,7 +52,7 @@ function determinePage(){
 }
 function renderUserPage(){
 	$db = new db_connection();
-	$root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php';
+	$root = 'http://ec2-50-16-117-221.compute-1.amazonaws.com/demos/php/index.php';
 	$db_response = array();
 	$db->exec('select * from users where active = 1;');
 	$db->disconnect();
@@ -64,8 +65,7 @@ function renderUserPage(){
 	print '</div>';
 }
 function renderDemoPage(){
-	//Add New!
-	print '<div id = "add_demo"> 
+	print '<div id = "add_demo" class="top_form"> 
 			<b>Create New Demo</b>
 			<form action="obj.php" method="post" enctype="multipart/form-data">
 			Demo Name: <input type="text" name="demo_name" /><br />
@@ -75,30 +75,30 @@ function renderDemoPage(){
 			<input type="hidden" name="owner_id" value ="'.$_GET['owner_id'].'" />
 			<input type="submit" value="Submit" />
 			</form>
-			</div>
+		</div>
 			<hr><hr>
 		';
 
 	//Show Current
 	$db = new db_connection();
-	$root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php';
+	$root = 'http://ec2-50-16-117-221.compute-1.amazonaws.com/demos/php/index.php';
 	$db_response = array();
-	$db->exec('select id, demo_name, site_url, dashboard_id from demo where owner_id = '.$_GET['owner_id'].';');
+	$db->exec('select id, demo_name, demo_url, dashboard_id from demo where owner_id = '.$_GET['owner_id'].';');
 	$db->disconnect();
 	$db_response = $db->response;
 
 	print '<h4> Demos: </h4><div id = "content">';
 	foreach ($db_response as $row) {
-		print '<a href="'.$root.'?page=demo_detail&owner_id='.$_GET['owner_id'].'&demo_id='.$row['id'].'" >'.$row['demo_name'].'</a>   '.$row['dashboard_id'].'  <a href="'.$row['site_url'].'">'.$row['site_url'].'</a> <br>';
+		print '<a href="'.$root.'?page=demo_detail&owner_id='.$_GET['owner_id'].'&demo_id='.$row['id'].'" >'.$row['demo_name'].'</a>   '.$row['dashboard_id'].'  <a href="'.$row['demo_url'].'.html" target="_blank">Preview</a> <br>';
 	}
 	print '</div>';
 }
 function renderDemoDetailPage(){
 	//Show Current
 	$db_demo = new db_connection();
-	$root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php';
+	$root = 'http://ec2-50-16-117-221.compute-1.amazonaws.com/demos/php/index.php';
 	$db_demo_response = array();
-	$db_demo->exec('select demo_name, site_url, dashboard_id from demo where id = '.$_GET['demo_id'].';');
+	$db_demo->exec('select demo_name, site_url, dashboard_id, demo_url from demo where id = '.$_GET['demo_id'].';');
 	$db_demo->disconnect();
 	$db_demo_response = $db_demo->response[0];
 
@@ -115,6 +115,7 @@ function renderDemoDetailPage(){
 			<input type="submit" value="Update" />
 			</form>
 		</div>
+		<a href="'.$db_demo_response['demo_url'].'.html" target="_blank">Preview</a>
 		<hr><hr>';
 
 	//Show current buttons
@@ -125,10 +126,10 @@ function renderDemoDetailPage(){
 	$db_button->disconnect();
 	$db_button_response = $db_button->response;
 
-	print '<h4> Buttons: <a href="http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=create_button&button_type=none&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'">Create New</a> <img src="http://www.aicrvolunteer.org/images/plus_icon.gif" onclick="top.location.href=\'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=create_button&button_type=none&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'\'"/> </h4> 
+	print '<h4> Buttons: <a href="http://ec2-50-16-117-221.compute-1.amazonaws.com/demos/php/index.php?page=create_button&button_type=none&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'">Create New</a> <img src="http://www.aicrvolunteer.org/images/plus_icon.gif" onclick="top.location.href=\'http://ec2-50-16-117-221.compute-1.amazonaws.com/demos/php/index.php?page=create_button&button_type=none&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'\'"/> </h4> 
 		<div id = "buttons">';
 	foreach ($db_button_response as $row) {
-		print '<a href="'.$root.'?page=button_detail&owner_id='.$_GET['owner_id'].'&demo_id='.$_GET['demo_id'].'&button_id='.$row['id'].'" >'.$row['title'].'</a>';
+		print '<a href="'.$root.'?page=edit_button&owner_id='.$_GET['owner_id'].'&demo_id='.$_GET['demo_id'].'&button_id='.$row['id'].'&button_type='.$row['type'].'" >'.$row['title'].'</a>';
 		if (isset($row['icon_url']) && !is_null($row['icon_url'])){
 			$icon = $row['icon_url'];
 		}
@@ -172,7 +173,7 @@ function renderCreateButtonPage(){
 	}
 }
 function renderEditButtonPage(){
- $dir_root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/';
+ $dir_root = 'http://ec2-50-16-117-221.compute-1.amazonaws.com/';
 	if(isset($_GET['button_id'])){
 		$db_button = new db_connection();
 		$db_button_response = array();

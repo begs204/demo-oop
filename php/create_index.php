@@ -1,7 +1,7 @@
 <?php
 
-error_reporting(E_ALL); 
-ini_set("display_errors", 1);
+// error_reporting(E_ALL); 
+// ini_set("display_errors", 1);
 	// $ind = new IndexFile();
 
 	// $ind->site_url = 'http://www.cnn.com';
@@ -45,6 +45,7 @@ class IndexFile{
 			d[e];o="javascript:var d="+g+".open();d.domain=\'"+d.domain+"\';";b[k]=o+"void(0);"}try{var t=
 			b.contentWindow[g];t.write(p());t.close()}catch(x){b[k]=o+\'d.write("\'+p().replace(/"/g,
 			\'\\"\')+\'");d.close();\'}a.T(1)}({network:"'.$this->dashboard_id.'"});
+			Meebo("unhide");
 			</script>
 
 			<div id="container">

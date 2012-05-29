@@ -26,7 +26,7 @@ class Demo{
 	var $buttons = array();
 	var $db_result = array();
 	var $filename;
-	var $dir_root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/';
+	var $dir_root = 'http://ec2-50-16-117-221.compute-1.amazonaws.com/';
 
 	function construct(){
 		$this->db_query();

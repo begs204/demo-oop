@@ -3,8 +3,8 @@
 include_once 'db.php';
 include_once 'create_js.php';
 
-error_reporting(E_ALL); 
-ini_set("display_errors", 1);
+// error_reporting(E_ALL); 
+// ini_set("display_errors", 1);
 
 // $_POST['button_type'] = 'link';
 // $_POST['demo_id'] = 1;
@@ -38,7 +38,7 @@ class Button {
 	var $link_url;
 	var $demo_dir;
 	var $type;
-	var $dir_root = 'http://ec2-50-19-198-56.compute-1.amazonaws.com/';
+	var $dir_root = 'http://ec2-50-16-117-221.compute-1.amazonaws.com/';
 	var $img_type = array("image/png","image/gif","image/jpeg","image/pjpeg","image/jpg","image/pdf","image/ico");
 	var $bad_char = array("~",",",".","<",">","!","@","#","$","%","^","&","*","(",")","-","_","+","=",";",":","/","?","[","]","{","}"," ");
 	var $img_max_size = 2000000000;

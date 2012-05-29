@@ -4,7 +4,7 @@ class owner {
 		$handle = opendir('/var/www/html/demos/owners/');
 		while(false !== ($dir = readdir($handle))){
 			if($dir != '..' && $dir != '.'){
-				echo "<li> <a href= \"http://http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/owners/".$dir."\">".$dir."</a></li>";
+				echo "<li> <a href= \"http://ec2-50-16-117-221.compute-1.amazonaws.com/demos/owners/".$dir."\">".$dir."</a></li>";
 			}
 		}
 		closedir($handle);
