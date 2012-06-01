@@ -3,7 +3,7 @@
 include_once 'db.php';
 include_once 'create_js.php';
 
-// error_reporting(E_ALL); 
+// error_reporting(E_ALL);
 // ini_set("display_errors", 1);
 
 // $_POST['button_type'] = 'link';
@@ -17,7 +17,7 @@ if(isset($_POST['button_id']) && $_POST['meebo_action'] == 'edit_button'){
 	$button = new Button();
 	$button->editButton();
 }
-elseif($_POST['meebo_action'] == 'create_button'){	
+elseif($_POST['meebo_action'] == 'create_button'){
 	$button = new Button();
 	$button->createButton();
 }
@@ -133,7 +133,7 @@ class Button {
 			if(isset($_POST['owner_id']) && !is_null($_POST['owner_id'])){
 				$this->owner_id = $_POST['owner_id'];
 			}
-		}	
+		}
 	}
 	function setButtonTitle(){
 		if( !isset($this->title)){
@@ -257,7 +257,7 @@ class Button {
 						$value_str = $value_str."'" . $value. "' ,";
 					}
 				}
-			 } 
+			 }
 			 $param_str = substr(rtrim($param_str), 0, -1);//trim trailing comma
 			 $value_str = substr(rtrim($value_str), 0, -1);
 
@@ -274,10 +274,10 @@ class Button {
 					else{
 						$save_str = $save_str . $key." = '". $value . "', ";
 					}
-				}	
+				}
 			}
 		$save_str = substr(rtrim($save_str), 0, -1);
-		$save_str = $save_str." where id = ".$this->id.";";	
+		$save_str = $save_str." where id = ".$this->id.";";
 
 		}
 
@@ -293,7 +293,7 @@ class Button {
 			$this->setButtonDemoId();
 			$this->setButtonOwnerId();
 			$this->setButtonType();
-			$header = $this->dir_root.'demos/php/index.php?page=edit_button&button_type='.$this->type.'&owner_id='.$this->owner_id.'&demo_id='.$this->demo_id.'&button_id='.$this->id;
+			$header = 'index.php?page=edit_button&button_type='.$this->type.'&owner_id='.$this->owner_id.'&demo_id='.$this->demo_id.'&button_id='.$this->id;
 			header("Location: ".$header);
 		}
 		else{
@@ -330,15 +330,16 @@ class Button {
 		}
 		$js_script->saveJSFile();
 	}
-	// 	function cleanDatabase(){
-	// 	if (isset($this->id)){
-	// 		$db_clean = new db_connection();
-	// 		$id_min = $this->id - 25;
-	// 		print $id_min;
-	// 		// $db_clean->exec('delete from buttons where demo_id is null and id < '.$id_min.';');
-	// 		$db_create->disconnect();
-	// 	}
-	// }
+
+	function cleanDatabase(){
+		if (isset($this->id)){
+			$db_clean = new db_connection();
+			$id_min = $this->id - 25;
+			//print $id_min;
+			$db_clean->exec('delete from buttons where demo_id is null and id < '.$id_min.';');
+			$db_create->disconnect();
+	 	}
+	}
 }
 
 ?>
