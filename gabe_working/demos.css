@@ -51,11 +51,15 @@ body { background-color: #dddddd; font-family: "Helvetica Neue", Helvetica, Aria
 header { background-color: #bbbbbb; padding: 10px; }
 h1, h1 a:link, h1 a:visited { font-size: 20px; color: black; text-decoration: none; }
 #main { padding: 20px; }
-h2 { font-size: 16px; padding: 5px; margin-bottom: 10px; }
-h3 { font-weight: bold; margin-bottom: 5px; }
+h2 { font-size: 16px; padding: 5px; margin-bottom: 10px; text-align: left; }
+h3 { font-weight: bold; margin-bottom: 5px; text-align: left; }
 ul { margin-top: 10px; padding-left: 20px; }
 li { list-style-type: disc; }
-#demo_form { border: 1px solid black; padding: 5px; width: 400px; margin-bottom: 15px; text-align: right; }
-#demo_form h3 { text-align: left; }
+#demo_form { border: 1px solid black; padding: 5px; width: 400px; margin-bottom: 15px; margin-top: 10px; text-align: right; }
 label { margin-right: 10px; }
 #demo_form label { float: left; clear: left; }
+#buttons { border: 1px solid black; padding: 5px; width: 400px; }
+#buttons li { margin-bottom: 10px; }
+#button_details { text-align: right; width: 300px; }
+#button_details form { margin-top: 10px; }
+#button_details label { float: left; clear: left; }

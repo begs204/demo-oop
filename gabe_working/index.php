@@ -115,6 +115,7 @@ function renderDemoPage(){
 		echo "</ul>\n";
 	}
 }
+
 function renderDemoDetailPage(){
 	//Show Current
 	$db_demo = new db_connection();
@@ -126,6 +127,8 @@ function renderDemoDetailPage(){
 
 
 	echo "<h2>Edit the <em>" . $db_demo_response['demo_name'] . "</em> Demo</h2>\n";
+	echo '<a href="'.$db_demo_response['demo_url'].'.html" target="_blank">click to preview demo</a>' . "<br />\n";
+	echo '<a href="?page=demo&owner_id=' . $_GET['owner_id'] . '">click to go back to user page</a>' . "<br />\n";
 	echo '<div id="demo_form">
 			<h3>Demo Basics</h3>
 			<form action="obj.php" method="post" enctype="multipart/form-data">
@@ -137,67 +140,93 @@ function renderDemoDetailPage(){
 			<input type="hidden" name="owner_id" value ="'.$_GET['owner_id'].'" />
 			<input type="submit" value="Update" />
 			</form>
-		</div>
-		<a href="'.$db_demo_response['demo_url'].'.html" target="_blank">Preview</a>' . "\n";
+		</div>' . "\n";
 
 	//Show current buttons
 	//Render a link to go to the Button detail page and create new button
 	$db_button = new db_connection();
 	$db_button_response = array();
-	$db_button->exec('select * from buttons where demo_id = '.$_GET['demo_id'].' and inactive != 1;');
+	$db_button->exec('select * from buttons where demo_id = '.$_GET['demo_id']);
 	$db_button->disconnect();
 	$db_button_response = $db_button->response;
 
-	echo '<h4>Buttons: <a href="?page=create_button&button_type=none&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'">Create New</a> <img src="http://www.aicrvolunteer.org/images/plus_icon.gif" onclick="top.location.href=\'http://ec2-50-16-117-221.compute-1.amazonaws.com/demos/php/index.php?page=create_button&button_type=none&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'\'"/> </h4>' . "\n";
-	echo '<div id="buttons">' . "\n";
-	foreach ($db_button_response as $row) {
-		echo '<a href="?page=edit_button&owner_id='.$_GET['owner_id'].'&demo_id='.$_GET['demo_id'].'&button_id='.$row['id'].'&button_type='.$row['type'].'" >'.$row['title'].'</a>\n';
-		if (isset($row['icon_url']) && !is_null($row['icon_url'])){
-			$icon = $row['icon_url'];
+	echo "<div id=\"buttons\">\n";
+	echo "<h3>Buttons</h3>\n";
+	echo '<a href="?page=create_button&button_type=none&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'">Add Button</a> <img src="http://www.aicrvolunteer.org/images/plus_icon.gif" onclick="top.location.href=\'http://ec2-50-16-117-221.compute-1.amazonaws.com/demos/php/index.php?page=create_button&button_type=none&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'\'"/> </h3>' . "<br /><br />\n";
+
+	if ( $row[0] )
+	{
+		echo "Click the button label below to edit the button<br />\n";
+		echo "<ul>\n";
+
+		foreach ($db_button_response as $row) {
+			echo "<li>";
+			echo '<a href="?page=edit_button&owner_id='.$_GET['owner_id'].'&demo_id='.$_GET['demo_id'].'&button_id='.$row['id'].'&button_type='.$row['type'].'" >'.$row['title'].'</a>' . "\n";
+
+			//make sure there's an icon for the button
+			if (isset($row['icon_url']) && !is_null($row['icon_url'])){
+				$icon = $row['icon_url'];
+			}
+			// elseif(isset($row['icon_dir']) && !is_null($row['icon_dir'])){
+			// 	$icon = $root.$row['icon_dir'];
+			// }
+			else{
+				$icon = -1;
+			}
+
+			//show either the link to url or the widget content, depending on the button type
+			if (isset($row['type']) && !is_null($row['type'])) {
+				 if($row['type'] == 'link' && isset($row['link_url']) && !is_null($row['link_url'])){
+					echo 'links to: <a href="'.$row['link_url'].'">'.$row['link_url'].'</a>';
+				 }
+				 elseif($row['type'] == 'widget' && isset($row['img_url']) && !is_null($row['img_url']) && isset($row['img_w']) && !is_null($row['img_w']) && isset($row['img_ht']) && !is_null($row['img_ht'])){
+					echo 'widget content:<br /><img src="'.$row['img_url'].'" height="' . $row['img_ht'] . '" width ="' . $row['img_w'] . '" />' . "<br /><br />\n";
+				 }
+			}
+
+			//if there's an icon, we'll show that now
+			if ($icon != -1)
+			{
+				echo '<br />icon: <img src="'.$icon.'" style="height: 16px;"/>' . "\n";
+			}
+			echo "</li>\n";
 		}
-		// elseif(isset($row['icon_dir']) && !is_null($row['icon_dir'])){
-		// 	$icon = $root.$row['icon_dir'];
-		// }
-		else{
-			$icon = -1;
-		}
-		if ($icon != -1){
-		echo '<img src="'.$icon.'"/>' . "\n";
-		}
-		if (isset($row['type']) && !is_null($row['type'])) {
-			 if($row['type'] == 'link' && isset($row['link_url']) && !is_null($row['link_url'])){
-			 	echo '<a href="'.$row['link_url'].'">'.$row['link_url'].'</a>';
-			 }
-			 elseif($row['type'] == 'widget' && isset($row['img_url']) && !is_null($row['img_url']) && isset($row['img_w']) && !is_null($row['img_w']) && isset($row['img_ht']) && !is_null($row['img_ht'])){
-			 	echo '<img src="'.$row['img_url'].'" height="'.$row['img_ht'].'" width ="'.$row['img_w'].'" />';
-			 }
-		}
-		echo "<br>\n";
+		echo "</ul>\n";
 	}
 	echo "</div>\n";
 }
 function renderCreateButtonPage(){
 	if(isset($_GET['button_type']) && $_GET['button_type'] == 'none'){//not set
-	echo '<div id = "create_button">
-		<form action="button.php" method="post" enctype="multipart/form-data">
-			Widget<input type="radio" name="button_type" value="widget" />
-			Link<input type="radio" name="button_type" value="link" /><br />
-			<input type="hidden" name="meebo_action" value ="create_button" />
-			<input type="hidden" name="demo_id" value ="'.$_GET['demo_id'].'" />
-			<input type="hidden" name="owner_id" value ="'.$_GET['owner_id'].'" />
-			<input type="submit" value="Next" />
-		</form>
-		</div>' . "\n";
+		echo "<div id=\"create_button\">\n";
+		echo "<h2>Create a new button: Select the button type</h2>";
+		echo "<form action=\"button.php\" method=\"post\" enctype=\"multipart/form-data\">\n";
+		echo "Widget <input type=\"radio\" name=\"button_type\" value=\"widget\" /><br />\n";
+		echo "Link <input type=\"radio\" name=\"button_type\" value=\"link\" /><br />\n";
+		echo "<input type=\"hidden\" name=\"meebo_action\" value =\"create_button\" />\n";
+		echo "<input type=\"hidden\" name=\"demo_id\" value=\"" . $_GET['demo_id'] . "\" />\n";
+		echo "<input type=\"hidden\" name=\"owner_id\" value=\"" . $_GET['owner_id'] . "\" />\n";
+		echo "<input type=\"submit\" value=\"Next\" />\n";
+		echo "</form>\n";
+		echo "</div>\n";
 	}
 	else{
 		echo "<em>Error - Invalid Params!</em>\n";
 	}
 }
-function renderEditButtonPage(){
-	if(isset($_GET['button_id'])){
+
+//this form is after the add button: button type selection page, or if a user edits an existing button
+function renderEditButtonPage() {
+
+	echo "<div id=\"button_details\">\n";
+
+	//are we editing an existing button?
+	if ( isset($_GET['button_id'] ) ) {
+		echo "<h2>Edit Button: details</h2>\n";
+		echo "<h3>go back to <a href=\"?page=demo_detail&owner_id=" . $_GET['owner_id'] . "&demo_id=" . $_GET['demo_id'] . "\">demo edit page</a></h3>\n";
+
 		$db_button = new db_connection();
 		$db_button_response = array();
-		$db_button->exec('select * from buttons where id = '.$_GET['button_id'].';');
+		$db_button->exec('select * from buttons where id=' . $_GET['button_id']);
 		$db_button->disconnect();
 		$db_button_response = $db_button->response[0];
 		$icon_html = "";
@@ -219,75 +248,81 @@ function renderEditButtonPage(){
 			$title_is_hidden = 'checked="checked"';
 		}
 		if(isset($db_button_response['icon_url'])){
-			$icon_html = '<img id="icon_img" width="16" height="16" src="'.$db_button_response['icon_url'].'">\n';
+			$icon_html = '<img id="icon_img" width="16" height="16" src="'.$db_button_response['icon_url'].'">' . "\n";
 		}
 		$icon_is_logo = '';
 		if($db_button_response['icon_is_logo'] == 1){
 			$icon_is_logo = 'checked="checked"';
-			$icon_html = '<img id="icon_img" style="height:30px;" src="'.$db_button_response['icon_url'].'">';
+			$icon_html = '<img id="icon_img" style="height:30px;" src="'.$db_button_response['icon_url'].'">' . "\n";
 		}
 
 	}
 
-		echo '
-			<script type="text/javascript">
-			function icon_upload(){
-				document.getElementById("icon_details").innerHTML = \'<input type="file" name="b_icon" value="'.$db_button_response['icon_url'].'"/> <img id="b_icon_img" src="'.$db_button_response['icon_url'].'" />\';
-			}
-			function icon_link(){
-				document.getElementById("icon_details").innerHTML = \'<i>Link</i>: <input type="text" name="icon_url" value="'.$db_button_response['icon_url'].'"/>\';
-			}
-			function icon_resize(){
-				icon_ht_raw = '.$icon_w_raw.';
-				icon_w_raw = '.$icon_ht_raw.';
-				if (document.forms[0]["icon_is_logo"].checked){
-					document.getElementById("icon_img").style.height = 30;
-					document.getElementById("icon_img").style.width = '.$icon_w_new.';
-				}
-				else{
-					document.getElementById("icon_img").style.height = 16;
-					document.getElementById("icon_img").style.width = 16;
-				}
-			}
-			</script>
-			<div id="button_details">
-			<b>Button Details</b>
-			<form action="button.php" method="post" enctype="multipart/form-data">
-			Button Text: <input type="text" name="button_title" value="'.$db_button_response['title'].'"/>
-			Hide Text: <input type="checkbox" name="title_is_hidden" '.$title_is_hidden.' /> <br /> <br />
+	//we are adding a new button
+	else
+	{
+		echo "<h2>Create Button: details</h2>\n";
+	}
 
-			<button type="button" onclick="icon_upload()" >Upload Icon</button>
-			<button type="button" onclick="icon_link()" >Link Icon Image</button>
-			Icon is Logo: <input type="checkbox" onclick="icon_resize()" name="icon_is_logo" '.$icon_is_logo.' />'.$icon_html.'
-
-			<div id = "icon">  <br /><br />
-				<div id="icon_details"></div>
-			</div>
-
-			<br /><br />' . "\n\n";
-
-		if ($_GET['button_type'] == 'widget'){
-			echo ' Expanded State: <input type="file" name="b_img" /> <img id="b_expanded_img" src="'.$db_button_response['img_url'].'" /><br />';
-
+	//output the form
+	echo "<script type=\"text/javascript\">\n";
+	echo 'function icon_upload(){
+		document.getElementById("icon_details").innerHTML = \'<input type="file" name="b_icon" value="'.$db_button_response['icon_url'].'"/> <img id="b_icon_img" src="'.$db_button_response['icon_url'].'" />\';
+	}
+	function icon_link(){
+		document.getElementById("icon_details").innerHTML = \'<label for="icon_url">Icon URL</label><input type="text" name="icon_url" id="icon_url" value="'.$db_button_response['icon_url'].'"/>\';
+	}
+	function icon_resize(){
+		icon_ht_raw = '.$icon_w_raw.';
+		icon_w_raw = '.$icon_ht_raw.';
+		if (document.forms[0]["icon_is_logo"].checked){
+			document.getElementById("icon_img").style.height = 30;
+			document.getElementById("icon_img").style.width = '.$icon_w_new.';
 		}
-		elseif($_GET['button_type']=='link'){
-			echo '
-				Link Address: <input type="text" name="link_url" value="'.$db_button_response['link_url'].'"/>\n';
+		else{
+			document.getElementById("icon_img").style.height = 16;
+			document.getElementById("icon_img").style.width = 16;
 		}
-		echo '<input type="hidden" name="meebo_action" value ="edit_button" />
-				<input type="hidden" name="button_id" value ="'.$_GET['button_id'].'" />
-				<input type="hidden" name="demo_id" value ="'.$_GET['demo_id'].'" />
-				<input type="hidden" name="owner_id" value ="'.$_GET['owner_id'].'" />
-				<input type="hidden" name="button_type" value ="'.$_GET['button_type'].'" /><br />
-				<input type="submit" value="Create/Update" />
-				</form>
-			</div>' . "\n";
+	}' . "\n";
+	echo "</script>\n";
 
+	//main button form inputs
+	echo '<form action="button.php" method="post" enctype="multipart/form-data">
+	<label for="button_title">Button Label</label><input type="text" name="button_title" id="button_title" value="' . $db_button_response['title'] . '"/><br />
+	<label for="title_is_hidden">Hide Label?</label><input type="checkbox" name="title_is_hidden" id="title_is_hidden" ' . $title_is_hidden . ' /><br />
+	<label for="icon_is_logo">Logo Button?</label><input type="checkbox" onclick="icon_resize()" name="icon_is_logo" id="icon_is_logo" ' . $icon_is_logo . ' />' . $icon_html . '<br />';
 
+	//auxiliary info - widget or link data
+	if ( $_GET['button_type'] == 'widget' )
+	{
+		echo "<label for=\"b_img\">Expanded State</label><input type=\"file\" name=\"b_img\" id=\"b_img\" /> <img id=\"b_expanded_img\" src=\"" . $db_button_response['img_url']. "\" /><br />";
+	}
+	elseif ( $_GET['button_type']=='link' )
+	{
+		echo "<label for=\"link_url\">Link Address</label><input type=\"text\" name=\"link_url\" id=\"link_url\" value=\"" . $db_button_response['link_url'] . "\"/><br />\n";
+	}
+
+	//select the icon for the button - a url or upload a file
+	echo "<br />\n";
+	echo '<button type="button" onclick="icon_upload()">Upload Icon</button> or
+	<button type="button" onclick="icon_link()">Link Icon Image</button><br /><br />
+
+	<div id="icon"><div id="icon_details"></div></div>';
+
+	echo "<br /><br />\n\n";
+
+	//hidden data
+	echo '<input type="hidden" name="meebo_action" value ="edit_button" />
+		<input type="hidden" name="button_id" value ="'.$_GET['button_id'].'" />
+		<input type="hidden" name="demo_id" value ="'.$_GET['demo_id'].'" />
+		<input type="hidden" name="owner_id" value ="'.$_GET['owner_id'].'" />
+		<input type="hidden" name="button_type" value ="'.$_GET['button_type'].'" /><br />
+		<input type="submit" value="Create/Update" />
+		</form>' . "\n";
+	echo "</div>\n";
 }
-?>
 
-<!-- <div id = "create_button">
+/* <div id = "create_button">
 		<select id="select_button_type">
 			<option value="widget">Widget</option>
 			<option value="link">Link</option>
@@ -296,8 +331,10 @@ function renderEditButtonPage(){
 		route = \'http://ec2-50-19-198-56.compute-1.amazonaws.com/demos/php/index.php?page=edit_button&meebo_action=create_button&button_type=\'+ document.getElementById(\'select_button_type\').value +\'&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'\';
 		</script>
 		<button type="button" onclick="top.location.href=route">Next</button>
-		</div> -->
+		</div>
+*/
 
+?>
 </div>
 
 </body>

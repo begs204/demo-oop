@@ -45,7 +45,7 @@ class Demo{
 	}
 	function routeDemoDetailPage(){
 		if(isset($this->owner_id) && isset($this->id)){
-			$header = $this->dir_root.'demos/php/index.php?page=demo_detail&owner_id='.$this->owner_id.'&demo_id='.$this->id;
+			$header = 'index.php?page=demo_detail&owner_id=' . $this->owner_id . '&demo_id=' . $this->id;
 			header("Location: ".$header);
 		}
 		else{
@@ -68,7 +68,7 @@ class Demo{
 	function db_query(){
 		if(isset($this->id)){
 			$db = new db_connection();
-			$db->exec("select * from demo where id = " . $this->id . ";");
+			$db->exec( "select * from demo where id = " . $this->id );
 			$this->db_result = $db->response;
 			$db->disconnect();
 		}
@@ -80,7 +80,7 @@ class Demo{
 		$this->id = $_POST['demo_id'];
 		$this->construct();
 		$this->saveDemo();
-		$this->routeDemoDetailPage();	
+		$this->routeDemoDetailPage();
 		$this->createIndex();
 	}
 	function saveDemo(){
@@ -100,13 +100,13 @@ class Demo{
 						$value_str = $value_str."'" . $value. "' ,";
 					}
 				}
-			 } 
+			 }
 			 $param_str = substr(rtrim($param_str), 0, -1);//trim trailing comma
 			 $value_str = substr(rtrim($value_str), 0, -1);
 
 			 $save_str = "insert into demo (".$param_str.") values (".$value_str.");";
 		}
-		
+
 		elseif(isset($this->id)){//Record already exists - update it
 			$save_str = "update demo set ";
 			foreach ($save_param as $key => $value) {
@@ -117,10 +117,10 @@ class Demo{
 					else{
 						$save_str = $save_str . $key." = '". $value . "', ";
 					}
-				}	
+				}
 			}
 		$save_str = substr(rtrim($save_str), 0, -1);
-		$save_str = $save_str." where id = ".$this->id.";";	
+		$save_str = $save_str." where id = ".$this->id.";";
 
 		}
 
@@ -191,7 +191,7 @@ class Demo{
 		if( !isset($this->$owner_id)){
 			if(isset($_POST['owner_id']) && !is_null($_POST['owner_id'])){
 				$this->owner_id = $_POST['owner_id'];
-			}			
+			}
 			elseif(isset($this->id) && !is_null($this->db_result['owner_id'])){
 				$this->owner_id = $db_result['owner_id'];
 			}
