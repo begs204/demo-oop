@@ -30,8 +30,8 @@ class JSButton{
 		else{
 			$icon_js = '';
 		}
-		if (isset($this->icon_is_logo) && $this->icon_is_logo == 1){
-			$icon_is_logo_js='isLogo:true,';
+		if (isset($this->icon_is_logo) && $this->icon_is_logo == '1'){
+			$icon_is_logo_js='isIcon:true,';
 		}
 		else{
 			$icon_is_logo_js = '';
@@ -55,6 +55,7 @@ class JSButton{
 		'.$title_js.'
 		'.$width_js.'
 		'.$height_js.'
+		'.$icon_is_logo_js.'
 				notResizable:true,
 				noBorder:true,
 		onCreate:function(widget,element){
@@ -79,7 +80,7 @@ class JSButton{
 			$icon_js = '';
 		}
 		if (isset($this->icon_is_logo) && $this->icon_is_logo == 1){
-			$icon_is_logo_js='isLogo:true,';
+			$icon_is_logo_js='isIcon:true,';
 		}
 		else{
 			$icon_is_logo_js = '';
@@ -96,6 +97,7 @@ class JSButton{
 	        type: "action",
 	        '.$icon_js.'
 			'.$title_js.' 
+			'.$icon_is_logo_js.'
 	        onClick: function(){ document.location="'.$this->link_url.'"; } 
     		});
 
