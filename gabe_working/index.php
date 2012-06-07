@@ -231,17 +231,17 @@ function renderEditButtonPage() {
 		$db_button_response = $db_button->response[0];
 		$icon_html = "";
 
-		if(isset($db_button_response['icon_url'])){
-			$icon_dim_raw = getimagesize($db_button_response['icon_url']);
-			$icon_w_raw = $icon_dim_raw[0];
-			$icon_ht_raw = $icon_dim_raw[1];
-			$icon_w_new = (30/$icon_ht_raw)*$icon_w_raw;
-		}
-		else{
-			$icon_w_raw = 0;
-			$icon_ht_raw = 0;
-			$icon_w_new = 0;
-		}
+		// if(isset($db_button_response['icon_url'])){
+		// 	$icon_dim_raw = getimagesize($db_button_response['icon_url']);
+		// 	$icon_w_raw = $icon_dim_raw[0];
+		// 	$icon_ht_raw = $icon_dim_raw[1];
+		// 	$icon_w_new = (30/$icon_ht_raw)*$icon_w_raw;
+		// }
+		// else{
+		// 	$icon_w_raw = 0;
+		// 	$icon_ht_raw = 0;
+		// 	$icon_w_new = 0;
+		// }
 
 		$title_is_hidden = '';
 		if($db_button_response['title_is_hidden'] == 1){
@@ -273,15 +273,15 @@ function renderEditButtonPage() {
 		document.getElementById("icon_details").innerHTML = \'<label for="icon_url">Icon URL</label><input type="text" name="icon_url" id="icon_url" value="'.$db_button_response['icon_url'].'"/>\';
 	}
 	function icon_resize(){
-		icon_ht_raw = '.$icon_w_raw.';
-		icon_w_raw = '.$icon_ht_raw.';
+		//icon_ht_raw = '.$icon_ht_raw.';
+		//icon_w_raw = '.$icon_w_raw.';
 		if (document.forms[0]["icon_is_logo"].checked){
-			document.getElementById("icon_img").style.height = 30;
-			document.getElementById("icon_img").style.width = '.$icon_w_new.';
+			document.getElementById("icon_img").style.height = "30px";
+			//document.getElementById("icon_img").style.width = '.$icon_w_new.';
 		}
 		else{
-			document.getElementById("icon_img").style.height = 16;
-			document.getElementById("icon_img").style.width = 16;
+			document.getElementById("icon_img").style.height = "16px";
+			//document.getElementById("icon_img").style.width = "16px";
 		}
 	}' . "\n";
 	echo "</script>\n";
