@@ -154,8 +154,8 @@ function renderDemoDetailPage(){
 	echo "<h3>Buttons</h3>\n";
 	echo '<a href="?page=create_button&button_type=none&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'">Add Button</a> <img src="http://www.aicrvolunteer.org/images/plus_icon.gif" onclick="top.location.href=\'http://ec2-50-16-117-221.compute-1.amazonaws.com/demos/php/index.php?page=create_button&button_type=none&demo_id='.$_GET['demo_id'].'&owner_id='.$_GET['owner_id'].'\'"/> </h3>' . "<br /><br />\n";
 
-	if ( $row[0] )
-	{
+	// if ( $row[0] )
+	// {
 		echo "Click the button label below to edit the button<br />\n";
 		echo "<ul>\n";
 
@@ -192,7 +192,7 @@ function renderDemoDetailPage(){
 			echo "</li>\n";
 		}
 		echo "</ul>\n";
-	}
+	//}
 	echo "</div>\n";
 }
 function renderCreateButtonPage(){
